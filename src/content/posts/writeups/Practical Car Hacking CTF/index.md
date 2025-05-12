@@ -2,7 +2,7 @@
 title: Practical Car Hacking CTF
 published: 2025-12-05
 description: A writeup for Practical Car Hacking CTF Teaser.
-tags: [Writeups, Car_Hacking]
+tags: [Writeups, CarHacking]
 image: "pic/cover.png"
 category: Writeups
 draft: false
