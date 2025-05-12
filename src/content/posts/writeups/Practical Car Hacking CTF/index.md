@@ -8,7 +8,7 @@ category: Writeups
 draft: false
 ---
 
-Pretty good CTF (for a noob like me)! I learned a lot from those challenges. Thanks to Willem Melching for creating this CTF.
+Pretty good CTF 2(for a noob like me)! I learned a lot from those challenges. Thanks to Willem Melching for creating this CTF.
 
 ## Easy Task
 #### Volkswagen CAN Checksum
