@@ -3,7 +3,7 @@ I mainly focus on IoT devices, hardware, automotive and RF.
 
 In CTFs, I'm mostly into rev and pwn — love digging into binaries 😄.
 
-I'm a part of the CTF Academy team, mentored by [Shellphish](https://shellphish.net/).
+I'm a part of the "CTF Academy" team, mentored by [Shellphish](https://shellphish.net/).
 
 I have orange/yellow/green/blue-belt on [pwn.college](https://pwn.college/hacker/7164) and have completed 2+ Flare-On challenges.
 
