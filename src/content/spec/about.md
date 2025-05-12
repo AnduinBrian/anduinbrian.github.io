@@ -8,4 +8,4 @@ In CTFs, I'm mostly into rev and pwn — love digging into binaries 😄.
 
 ### My contacts:
 - Email: reisen1943.ctf@gmail.com
-- [linkedin](https://www.linkedin.com/in/huy-nguyen-85097316b/) - [CV]("/public/my_cv.pdf")
+- [linkedin](https://www.linkedin.com/in/huy-nguyen-85097316b/) - [CV](/my_cv.pdf)
