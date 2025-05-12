@@ -7,8 +7,8 @@ import type {
 import { LinkPreset } from "./types/config";
 
 export const siteConfig: SiteConfig = {
-	title: "Security Blogs",
-	subtitle: "Reisen_1943",
+	title: "Reisen_1943",
+	subtitle: "Security Blogs",
 	lang: "en", // 'en', 'zh_CN', 'zh_TW', 'ja', 'ko', 'es', 'th'
 	themeColor: {
 		hue: 250, // Default hue for the theme color, from 0 to 360. e.g. red: 0, teal: 200, cyan: 250, pink: 345
@@ -68,7 +68,7 @@ export const profileConfig: ProfileConfig = {
 			icon: "fa6-brands:github",
 			url: "https://github.com/AnduinBrian",
 		},
-		{
+			{
 			name: "Linkedin",
 			icon: "fa6-brands:linkedin",
 			url: "https://www.linkedin.com/in/huy-nguyen-85097316b/",
