@@ -1,5 +1,5 @@
 # About
-I mainly focus on IoT devices, hardware, automotive and RF.<br>
+I mainly focus on IoT devices, hardware, automotive and RF.
 
 In CTFs, I'm mostly into rev and pwn — love digging into binaries 😄.
 
