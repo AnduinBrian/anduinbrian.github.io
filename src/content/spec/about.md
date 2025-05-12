@@ -1,9 +1,11 @@
 # About
-This is the demo site for [Fuwari](https://github.com/saicaca/fuwari).
+Mainly focus on IoT devices, hardware, automotive and RF.<br>
 
-::github{repo="saicaca/fuwari"}
+In CTFs, I'm mostly into rev and pwn — love digging into binaries 😄.
 
-> ### Sources of images used in this site
-> - [Unsplash](https://unsplash.com/)
-> - [星と少女](https://www.pixiv.net/artworks/108916539) by [Stella](https://www.pixiv.net/users/93273965)
-> - [Rabbit - v1.4 Showcase](https://civitai.com/posts/586908) by [Rabbit_YourMajesty](https://civitai.com/user/Rabbit_YourMajesty)
+*you can see this blog src here*<br>
+::github{repo="AnduinBrian/anduinbrian.github.io "}
+
+### My contacts:
+- Email: reisen1943.ctf@gmail.com
+- [linkedin](https://www.linkedin.com/in/huy-nguyen-85097316b/) - [CV]("/public/my_cv.pdf")
