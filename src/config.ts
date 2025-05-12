@@ -68,6 +68,11 @@ export const profileConfig: ProfileConfig = {
 			icon: "fa6-brands:github",
 			url: "https://github.com/AnduinBrian",
 		},
+		{
+			name: "Linkedin",
+			icon: "fa6-brands:linkedin",
+			url: "https://www.linkedin.com/in/huy-nguyen-85097316b/",
+		},
 	],
 };
 
