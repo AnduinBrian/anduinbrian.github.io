@@ -9,6 +9,6 @@ I have a blue belt on pwn.college and have completed 2+ Flare-On challenges.
 
 ### My contacts:
 - Email: reisen1943.ctf@gmail.com
-- [linkedin](https://www.linkedin.com/in/huy-nguyen-85097316b/) - [CV](/my_cv.pdf)
+- My resume: [download](/my_cv.pdf) <img = src"/favicon/download.png" width="25" height="25">
 
 ::github{repo="AnduinBrian/anduinbrian.github.io "}
