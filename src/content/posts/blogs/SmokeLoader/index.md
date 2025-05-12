@@ -187,3 +187,9 @@ Python> extract_c2(0x180002810, 99, 0xe4)
     http://protest-05242505.tk/
 ```
 </div>
+
+<style>
+  pre.astro-code.github-dark {
+    margin: 0;
+  }
+</style>
