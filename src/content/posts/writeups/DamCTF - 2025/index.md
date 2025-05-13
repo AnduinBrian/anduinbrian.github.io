@@ -9,6 +9,7 @@ draft: false
 ---
 
 <style>
+/* This targets only this page */
 pre.astro-code.github-dark {
   margin: 0;
 }
@@ -209,7 +210,7 @@ I can see some packet with Cluster: OTA Upgrade (0x0019), lets get all the packe
 
 ![](pics/cluster.png)
 
-We get some traffic with data is some ascii string. Since we are playing damCTF, so I gonna search for some *"dam{"* or *"64:61:6d:7b"* in hex. And we found the flag.
+Add this key to Wireshark. We get some traffic with data is some ascii string. Since we are playing damCTF, so I gonna search for some *"dam{"* or *"64:61:6d:7b"* in hex. And we found the flag.
 
 ![](pics/flag.png)
 
@@ -251,7 +252,7 @@ ICAO will contain plane's info, we can search through it. Write a simple script 
 >
 >[attached](/writeups_file_attached/damnctf_2025/breach)
 
-### Binary analysis
+#### Binary analysis
 The program give us a matrix[10][10] and 2 command:
 ```
  74  63  63  2D  73  73  20  6C  63  2D
@@ -313,3 +314,9 @@ flag
 ```
 
 Good good, now we just need to create a string like `cd altf; cat flag`.
+
+<style
+  pre.astro-code.github-dark {
+    margin: 0;
+  }
+</style>
