@@ -8,6 +8,13 @@ image: pics/damn_ctf_banner.png
 draft: false
 ---
 
+<style>
+/* This targets only this page */
+pre.astro-code.github-dark {
+  margin: 0;
+}
+</style>
+
 > This was my first CTF with "CTF Academy", mentored by Shellphish. I'm so happy to have played alongside everyone! We solved 14 out of 18 challenges and finished 21st overall. WP everybody !!
 
 ![](pics/ggwp.png)
@@ -88,7 +95,8 @@ if __name__ == "__main__":
 # etnsOle`,5?}Iz)2Cb@
 ```
 Good enough, now we just need to tweak the string. Those steps:
-<div style="height: 300px; overflow-y: scroll;border: none">
+
+<div style="height: 300px; overflow-y: scroll;border: none;">
 
 ```console
 7
