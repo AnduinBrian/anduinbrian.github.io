@@ -8,7 +8,7 @@ image: pics/damn_ctf_banner.png
 draft: false
 ---
 
-> This was my first CTF with CTF Academy, mentored by Shellphish. I'm so happy to have played alongside everyone! We solved 14 out of 18 challenges and finished 21st overall. WP everybody !!
+> This was my first CTF with "CTF Academy", mentored by Shellphish. I'm so happy to have played alongside everyone! We solved 14 out of 18 challenges and finished 21st overall. WP everybody !!
 
 ![](pics/ggwp.png)
 
@@ -22,7 +22,7 @@ They release the official writeups for every chall. But I just want to write one
 >nc itsdatanotdata.chals.damctf.xyz 39531<br>
 >[attached](/writeups_file_attached/damnctf_2025/chall.bin)
 
-### Binary reverse
+### Binary analysis
 
 The program gonna take our input to gen a weird string. Then ask us to make it become **"episode3,57min34sec"** in 100 step. The program will expect a number from user to execute command.<br>
 After reverse we got the command table like this:
@@ -202,7 +202,7 @@ I can see some packet with Cluster: OTA Upgrade (0x0019), lets get all the packe
 
 ![](pics/cluster.png)
 
-Add this key to Wireshark. We get some traffic with data is some ascii string. Since we playing damCTF, so I gonna search for some *"dam{"* or *"64:61:6d:7b"* in hex. And we found the flag.
+Add this key to Wireshark. We get some traffic with data is some ascii string. Since we are playing damCTF, so I gonna search for some *"dam{"* or *"64:61:6d:7b"* in hex. And we found the flag.
 
 ![](pics/flag.png)
 
@@ -231,6 +231,79 @@ The challenge detail talk about plane. The 1st value has 112-bits, the 3rd is 56
 ICAO will contain plane's info, we can search through it. Write a simple script that parse all the 112-bits value, get ICAO then search. Most of them are civil planes... but there is one plane with ICAO `AC82EC`. It's NASA plane, so this must be the one we are finding for. I use this [web](https://tr.flightaware.com) to get the info, and we have the flag.
 
 ![](pics/plane.png)
+
+## misc/breach
+#### Challenge detail
+>hack the mainframe, choom. eddies for days.
+>
+>ssh chal@breach.chals.damctf.xyz
+>
+>pw: chalworksnow
+>
+>[attached](/writeups_file_attached/damnctf_2025/breach)
+
+#### Binary analysis
+The program give us a matrix[10][10] and 2 command:
+```
+ 74  63  63  2D  73  73  20  6C  63  2D
+ 3B  74  66  74  3B  6C  67  66  20  73
+ 74  67  67  74  61  20  3B  73  6C  2D
+ 67  52  64  6C  61  3B  73  20  66  73
+ 61  61  61  2D  6C  66  67  63  63  3B
+ 67  64  66  61  52  67  20  67  63  63
+ 66  64  64  52  74  2D  73  20  52  74
+ 6C  63  6C  20  20  67  66  6C  66  3B
+ 3B  64  2D  3B  6C  61  2D  61  61  20
+ 63  52  6C  74  64  66  3B  20  6C  52
+
+ [63][66][20][3b][74] NEUTRALIZE MALWARE
+ [67][20][67][3b][6c][74][3b][20] DATAMINE: COPY MALWARE
+```
+I chose some random pos to get better understand. x denotes row, y denotes column.At first x = 0, if we select the pos at y (0, y) then next time we will have to select pos on the y column, so on and so on,... e.g: if we select (0, 2) at first, then we need to selec pos in 3rd column for next value.<br>
+The output is quite interesting:
+```
+BUFFER: [74 74 63 63 74 74 74 74 ]
+BREACH FAILED. ERROR:
+bash: line 1: ttccttttccc: command not found
+```
+Hmm why is the `ttccttttccc: command not found` here. Lets load it to our fav decompiler.<br>
+The program check our buffer with `[63 66 20]` and `[67 20 67 3b]`. If correct, it makes the program hang (WTF ??).
+
+![](pics/ida.PNG)
+
+Then I found a interesting place, the program call `os_exec_Command()`. So the program will decode your input from hex to ascii and pass it to `os_exec_Command()`. Thats why the `ttccttttccc: command not found` appeared. 
+
+![](pics/ida_2.PNG)
+
+I try to create a string "ls -R". And the output is:
+```
+BUFFER: [6C 73 20 2D 52 ]
+
+DEBUG: AXIS: y
+BREACH FAILED. ERROR:
+.:
+alft
+altf
+atfl
+falt
+flat
+latf
+
+./alft:
+
+./altf:
+flag
+
+./atfl:
+
+./falt:
+
+./flat:
+
+./latf:
+```
+
+Good good, now we just need to create a string like `cd altf; cat flag`.
 
 <style
   pre.astro-code.github-dark {
