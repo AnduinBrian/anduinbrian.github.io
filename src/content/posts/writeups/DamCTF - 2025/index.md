@@ -210,7 +210,7 @@ I can see some packet with Cluster: OTA Upgrade (0x0019), lets get all the packe
 
 ![](pics/cluster.png)
 
-Add this key to Wireshark. We get some traffic with data is some ascii string. Since we are playing damCTF, so I gonna search for some *"dam{"* or *"64:61:6d:7b"* in hex. And we found the flag.
+We get some traffic with data is some ascii string. Since we are playing damCTF, so I gonna search for some *"dam{"* or *"64:61:6d:7b"* in hex. And we found the flag.
 
 ![](pics/flag.png)
 
