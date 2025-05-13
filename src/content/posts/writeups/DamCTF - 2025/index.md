@@ -214,6 +214,8 @@ Add this key to Wireshark. We get some traffic with data is some ascii string. S
 
 ![](pics/flag.png)
 
+Or you can use [ZigbeeOtaExtractor](https://github.com/compujuckel/ZigbeeOtaExtractor). In Wireshark, apply this filter `zbee_aps.cluster == 0x0019` then **File -> Export Packet Dissections -> As Json**. Then use ZigbeeOtaExtractor and find for a flag.
+
 ## misc/Mode Sleuth
 ### Challenge detail
 >Software defined radio is so fun! I just recorded a bunch of planes near me, but I think someone messed with the data. Can you find the plane that is not supposed to be there?
