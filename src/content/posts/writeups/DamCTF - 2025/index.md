@@ -250,7 +250,7 @@ ICAO will contain plane's info, we can search through it. Write a simple script 
 >
 >[attached](/writeups_file_attached/damnctf_2025/breach)
 
-#### Binary analysis
+### Binary analysis
 The program give us a matrix[10][10] and 2 command:
 ```
  74  63  63  2D  73  73  20  6C  63  2D
