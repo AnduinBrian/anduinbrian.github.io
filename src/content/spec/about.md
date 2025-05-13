@@ -3,7 +3,7 @@ I've been doing Malware Analysis and Threat Hunt for 4+ years.<br><br>
 I mainly focus on IoT devices, hardware, automotive and RF.<br><br>
 In CTFs, I'm mostly into rev and pwn — love digging into binaries 😄.<br><br>
 I'm a part of the "CTF Academy" team, mentored by [Shellphish](https://shellphish.net/).<br><br>
-I have orange/yellow/green/blue-belt on [pwn.college](https://pwn.college/hacker/7164) and have completed 2+ Flare-On challenges.<br><br><br>
+I have orange/yellow/green/blue-belt on [pwn.college](https://pwn.college/hacker/7164) and have completed 2+ Flare-On challenges.<br><br>
 
 ### My contacts:
 - Email: reisen1943.ctf@gmail.com
