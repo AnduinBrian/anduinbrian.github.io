@@ -1,6 +1,6 @@
 ---
 title: DamCTF - 2025
-published: 2025-12-05
+published: 2025-05-12
 description: A writeup for DamCTF.
 tags: [Writeups, DamCTF]
 category: Writeups

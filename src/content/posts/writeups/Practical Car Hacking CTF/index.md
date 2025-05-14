@@ -1,6 +1,7 @@
 ---
 title: Practical Car Hacking CTF
-published: 2025-09-05
+published: 2025-05-09
+updated: 2025-05-12
 description: A writeup for Practical Car Hacking CTF Teaser.
 tags: [Writeups, CarHacking]
 image: "pic/cover.png"
@@ -85,7 +86,7 @@ $python solve_checksum.py
 ```
 
 ## Medium Task
-#### hittag2 Keyfob ID (part 1)
+### hittag2 Keyfob ID (part 1)
 >**Challenge**
 ><br>&nbsp;&nbsp;&nbsp;&nbsp;This challenge contains a recording from a Keyfob featuring a Hitag2 cipher for RKE. The keyfob transmits a message containing a plaintext keyfob ID, counter and button followed by a MAC. Attached to this challenge you will find a SDR recording of 6 presses of the unlock button.
 ><br>&nbsp;&nbsp;&nbsp;&nbsp;Use URH to decode the messages from the keyfob and figure out the keyfob ID. The flag is of the form CTF{keyfob id}, e.g CTF{536c8dab}
@@ -213,7 +214,7 @@ if __name__ == "__main__":
 ```
 
 ## Hard Task
-#### hittag2 Keyfob ID (part 2)
+### hittag2 Keyfob ID (part 2)
 >**Challenge**
 ><br>&nbsp;&nbsp;&nbsp;&nbsp;This challenge contains a recording from a Keyfob featuring a Hitag2 cipher for RKE. The keyfob transmits a message containing a plaintext keyfob ID, counter and button followed by a MAC. Attached to this challenge you will find a SDR recording of 6 presses of the unlock button.
 ><br>&nbsp;&nbsp;&nbsp;&nbsp;Use URH to decode the messages from the keyfob and figure out the keyfob ID, button and keystream. Use this to crack the (equivalent) key that's inside the keyfob. The flag is of the form CTF{key}, e.g. CTF{1d81e7e1a6fe}.
@@ -289,4 +290,162 @@ $python hitag2.py 72b7c3cce726 0200472a 00000e70
 ```
 Noice !! Same keystream with part 1. So part 2 flag is:`CTF{72b7c3cce726}`
 
-*To be continued...*
+### AVTP Video
+>**Challenge**
+><br>&nbsp;&nbsp;&nbsp;&nbsp;Attached to this challenge you will find a pcap captured from a G30 BMW. This capture was taken using a TAP on the automotive ethernet connection between the BDC (e.g. the gateway/BCM) and the rear view camera.<br>
+>&nbsp;&nbsp;&nbsp;&nbsp;In this pcap you will first see SOME/IP traffic. When the car is put in reverse a video stream is started alongside the SOME/IP traffic. The goal of the challenge is to decode this video stream. The rear view camera is pointed at a piece of paper containing the flag.
+
+Since we are looking for a video, I focus on analyzing the JPEG protocol. Lets tear the 1st packet down:
+```console
+0000   03 01 a9 ee 10 75 44 0c ee 36 5e 46 81 00 a0 56   .....uD..6^F...V
+0010   22 f0 03 80 01 01 44 0c ee 36 5e 46 10 75 00 00   ".....D..6^F.u..
+0020   00 00 02 00 00 01 00 20 00 00 67 42 00 29 e3 50   ....... ..gB.).P
+0030   16 87 a4 20 00 00 7d 00 00 18 6a 0d 18 00 0c e0   ... ..}...j.....
+0040   00 04 86 bd e0 00 40 00 00 00 00 00 00 00 00 00   ......@.........
+0050   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+0060   00 00 00 00 00 00                                 ......
+```
+
+| Bytes      | Name | Value |
+| :---        |    :----:  | :----:  |
+| 0 - 14 | Ethernet Header | 03 01 a9 ee 10 75 44 0c ee 36 5e 46 81 00 |
+| 12 - 16 | VLAN tag | 81 00 a0 56|
+| 16 - ... | AVTP Header and payload | 22 f0 03 80 ... 00 00|
+
+Why AVTP ? because the `22 f0` is the EtherType value of [AVTP](https://en.wikipedia.org/wiki/EtherType). After that, we need to parse the AVTP header, lets break it down:
+
+![](pic/avtp_frame.png)
+
+```
+Subtype: 0x3 - Compressed Video Format (CVF)
+Sequence Number: 0x1 - The first packet ??
+Length payload: 0x20 bytes
+```
+
+With Subtype(0x3), AVTP can carry:
+* H.264 (AVC)
+* JPEG 2000
+* MPEG-2
+* H.265 (HEVC)
+
+Payload start with `67 42 00 29 ...`, so I found out this AVTP carry H.264 video. The first packet sent SPS and the next packet sent PPS. In H.264 video encoding, ***SPS*** and ***PPS*** are two critical metadata units that tell a video decoder how to interpret the actual video data (frames).<br>
+Okay now we know what we are doing, time to learn about H.264. Lets analyze the AVTP layer of 3rd packet. Raw packet:
+
+```
+0000   03 01 a9 ee 10 75 44 0c ee 36 5e 46 81 00 a0 56
+0010   22 f0 03 80 03 01 44 0c ee 36 5e 46 10 75 00 00
+0020   00 00 02 00 00 01 05 59 00 00 7c 85 88 84 00 00
+0030   6b 7b e9 8f f2 c1 90 00 10 12 f4 45 23 c8 a5 d8
+...    ...
+```
+
+`Raw_packet[38:40] = 1369 (big endian)` - is the length of payload. The payload start at `Raw_packet[42:42 + length]`. The first bytes is **NAL Unit**, detail:
+
+| Bit      | Name | Description |
+| :---        |    :----:   | :----: |
+| 1 | F | Forbidden zero bit (must always be 0) |
+| 2 | NRI | NAL Reference ID |
+| 5 | Type | Identifies the type of NAL unit |
+
+In this payload, the NAL is `0x7c` or `01111100` in binary
+
+```
+0(0)       11(3)      11100(28)
+F           NRI         Type
+```
+Type = 28 => FU-A (Fragmentation Unit - Type A) this tells us this is a fragmented unit. The next bytes will be FU-Header. The FU-Header detail:
+
+| Bit      | Name | Description |
+| :---        |    :----:   | :----: |
+| 1 | S | Start bit - 1: This is the first fragment, 0: opposite |
+| 1 | E | End bit - 1: This is the last fragment; 0: opposite |
+| 1 | R | Reserved |
+| 5 | Type | Type of the original NAL unit being fragmented |
+
+The next bytes is `0x85` or `10000101`. Lets break it down:
+
+```
+1(1)    0(0)    0(0)    00101(5)
+S       E       R       Type
+```
+
+So, this is the first fragment (bit S = 1) and this is the IDR slice (Type = 5). Base on the FU-Header detail, we can assume if we encounter the packet has NAL and FU-Header = `0x7c 0x45`, this will be the fragmented because `0x45 == 01000101` the E bit is on.
+
+![](pic/end_fragmented.png)
+
+Now we need to find a way to recover the frame. I download the example h264 file, and do a little search on internet. I can see the format of h264 file header like:
+
+```
+example:
+00 00 00 01 67 42 00 1e da 01 e0 ...    (SPS)
+00 00 00 01 68 ce 3c 80                 (PPS)
+00 00 00 01 65 88 84 00 ...             (IDR slice / keyframe)
+```
+
+Okay so, first we need to add SPS and PPS info into our recover file. But we need to add the prefix `\x00\x00\x00\x01` first, then `SPS_payload`, do the same with PPS.<br>
+Then the frame come in, we need to add prefix `\x00\x00\x00\x01` too, but this time we need to add the NAL unit `0x65`. Why `0x65` ? Because the `0x65 = 01100101`, NRI = 3 and Type = 5 (IDR slice). After that is the payload but we need to remove 2 first bytes (the NAL unit and FU-Header). For the next fragment (S bit and E bit is zero), we dont need to add the prefix.<br>
+But how do we know when 1 frame (frame in video) end. We can use the AVTP Timestamp, same frame gonna has same Timestamp right ? (I suppose it is). We choose the `AVTP_Timestamp = 0` and only get payload from packet has `AVTP_Timestamp = 0`.
+
+```python
+from scapy.all import rdpcap, Dot1Q, Ether
+import sys
+
+prefix = b"\x00\x00\x00\x01"
+Found = 0
+Timestamp = 0
+
+if len(sys.argv) == 2:
+    packet_cap = rdpcap(sys.argv[1])
+    with open("result.bin", "wb") as f:
+        for packet in packet_cap:
+            write_data = b""
+            if Ether in packet:
+                if packet.haslayer(Dot1Q):
+                    ether_type = packet.getlayer(Dot1Q)
+                    if ether_type.type == 0x22f0:
+                        payload = bytes(ether_type.payload)
+                        AVTP_timestamp = int.from_bytes(payload[12:16], "big")
+                        if AVTP_timestamp == Timestamp:
+                            payload_len = int.from_bytes(payload[20:22], "big")
+                            AVTP_payload = payload[24:24 + payload_len]
+                            NAL_unit = AVTP_payload[0]
+                            if NAL_unit == 0x67: # encounter the SPS
+                                write_data = prefix + AVTP_payload
+                            elif NAL_unit == 0x68:
+                                write_data = prefix + AVTP_payload
+                            elif NAL_unit == 0x7c:
+                                FU_header = AVTP_payload[1]
+                                if FU_header == 0x85:
+                                    print("Encounter First fragment")
+                                    write_data = prefix + b"\x65" + AVTP_payload[2:]
+                                elif FU_header == 0x05:
+                                    write_data = AVTP_payload[2:]
+                                elif FU_header == 0x45:
+                                    print("End of fragment")
+                                    write_data = AVTP_payload[2:]
+                                    Found = 1
+
+            if write_data != b"":
+                f.write(write_data)
+            if Found == 1:
+                break
+else:
+    print("Need ARGV !!")
+    exit(0)
+```
+
+Then use `ffmpeg` to decompress it to png.
+```
+ffmpeg.exe -f h264 -i result.bin output.png
+```
+
+Finally we got a png that show flag
+
+![](pic/flag.png)
+
+You can try to recover full video by looping the reconstruction process we used before. The Video is:
+
+<video width="640" height="360" controls>
+  <source src="/writeups_file_attached\PracticalCarHacking/video.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
