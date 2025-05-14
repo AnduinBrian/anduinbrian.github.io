@@ -214,7 +214,9 @@ Add this key to Wireshark. We get some traffic with data is some ascii string. S
 
 ![](pics/flag.png)
 
-Or you can use [ZigbeeOtaExtractor](https://github.com/compujuckel/ZigbeeOtaExtractor). In Wireshark, apply this filter `zbee_aps.cluster == 0x0019` then **File -> Export Packet Dissections -> As Json**. Then use ZigbeeOtaExtractor and find for a flag.
+Or you can use ZigbeeOtaExtractor. In Wireshark, apply this filter `zbee_aps.cluster == 0x0019` then **File -> Export Packet Dissections -> As Json**. Then use ZigbeeOtaExtractor and find for a flag.
+
+::github{repo="compujuckel/ZigbeeOtaExtractor"}
 
 ## misc/Mode Sleuth
 ### Challenge detail
