@@ -240,7 +240,7 @@ I used all the data from the first packet that was successfully parsed. There ar
 * \<nR1> = 0xe70
 * \<aR1> = 0xe93a6e74
 
-With the hint, we can easy find the hitag2crack in proxmark3 git repo. There are crack1, 2, 3, 4 and 5. The author of first 4 is Kevin Sheldrake - he gave an excellent talk about cracking hitag2 crypto at 44CON (should watch !!). But from the hint, I went straight to crack5.
+With the hint, we can easy find the hitag2crack in proxmark3 git repo. There are crack1, 2, 3, 4 and 5. The author of first 4 is Kevin Sheldrake - he gave an excellent talk about cracking hitag2 crypto at 44CON 2017 ([should watch !!](https://www.youtube.com/watch?v=abx1hQDCKyg)). But from the hint, I went straight to crack5.
 <br>We have \<UID> \<nR1> \<aR1>, now need another \<nR2> \<aR2>. I tried the next successful parsed packet, I compiled the crack5 and passed the param in.
 ```console
 $python hitag2_parse.py ffff0200472a03a05749e7facf
