@@ -411,10 +411,10 @@ if len(sys.argv) == 2:
                             NAL_unit = AVTP_payload[0]
                             if NAL_unit == 0x67: # encounter the SPS
                                 write_data = prefix + AVTP_payload
-                            elif NAL_unit == 0x68:
+                            elif NAL_unit == 0x68: # encounter the PPS
                                 write_data = prefix + AVTP_payload
-                            elif NAL_unit == 0x7c:
-                                FU_header = AVTP_payload[1]
+                            elif NAL_unit == 0x7c: # FU Indicator
+                                FU_header = AVTP_payload[1] # FU Header
                                 if FU_header == 0x85:
                                     print("Encounter First fragment")
                                     write_data = prefix + b"\x65" + AVTP_payload[2:]
