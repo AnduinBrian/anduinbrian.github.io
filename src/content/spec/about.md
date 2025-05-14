@@ -7,9 +7,10 @@
 }
 </style>
 
+# About
+
 <img src="/avatar.png" width=320px class="center">
 
-# About
 I've been doing Malware Analysis and Threat Hunt for 4+ years.<br><br>
 I mainly focus on IoT devices, hardware, automotive and RF.<br><br>
 In CTFs, I'm mostly into rev and pwn — love digging into binaries 😄.<br><br>
