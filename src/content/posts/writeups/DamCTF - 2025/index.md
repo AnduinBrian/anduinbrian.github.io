@@ -1,4 +1,4 @@
----
+8---
 title: DamCTF - 2025
 published: 2025-05-12
 description: A writeup for DamCTF.
@@ -43,8 +43,8 @@ After reverse we got the command table like this:
 | 2       | str[cursor] += 3       |
 | 3       | str[cursor] += 3       |
 | 7       | set "7" at str[7]       |
-| 9       | swap str[cursor] witch str[cursor - 1]    |
-| 8       | swap str[cursor] witch str[cursor + 2]    |
+| 9       | swap str[cursor] with str[cursor - 1]    |
+| 8       | swap str[cursor] with str[cursor + 2]    |
 
 Everytime you use those command, the step += 1.<br>
 There are 2 commands that allow you to move the cursor:
