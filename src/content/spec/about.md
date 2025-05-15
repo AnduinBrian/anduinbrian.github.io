@@ -3,13 +3,13 @@
   display: block;
   margin-left: auto;
   margin-right: auto;
-  width: 50%;
+  width: 70%;
 }
 </style>
 
 # About
 
-<img src="/avatar.png" width=320px class="center">
+<img src="/banner.png" width=320px class="center">
 
 I've been doing Malware Analysis and Threat Hunt for 4+ years.<br><br>
 I mainly focus on IoT devices, hardware, automotive and RF.<br><br>
