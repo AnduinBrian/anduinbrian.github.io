@@ -315,10 +315,4 @@ flag
 ./latf:
 ```
 
-Good good, now we just need to create a string like `cd altf; cat flag`.
-
-<style
-  pre.astro-code.github-dark {
-    margin: 0;
-  }
-</style>
+Good good, now we just need to create a string like `cd altf; cat flag`
