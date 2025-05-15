@@ -1,4 +1,4 @@
-8---
+---
 title: DamCTF - 2025
 published: 2025-05-12
 description: A writeup for DamCTF.
