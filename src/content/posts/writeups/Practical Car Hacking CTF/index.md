@@ -110,7 +110,7 @@ From the PDF, we can see:
 | Parameter      | Value |
 | :---        |    :----:   |
 | Working freq       | 433 Mhz       |
-| Modulation       | ASK       |
+| Modulation       | ASK\FSK       |
 | Encoding       | Manchester       |
 
 Packet detail:
