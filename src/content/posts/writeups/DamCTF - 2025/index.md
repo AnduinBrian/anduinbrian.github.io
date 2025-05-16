@@ -54,8 +54,8 @@ There are 2 commands that allow you to move the cursor:
 | r       | move cursor to right       |
 | l       | move cursor to left       |
 
-Those 2 are not considered steps<br>
-Because we only have 100 step. We need to optimize the string by find the good init number and let the program get us a good string. Script (shout out to Elvis):
+These 2 commands don't count as 1 step.<br>
+Because we only have 100 steps. We need a **GOOD** string by finding the good init number and let the program give us a good string. Script (shout out to Elvis):
 ```python
 from pwn import *
 
