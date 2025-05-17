@@ -2,7 +2,7 @@
 
 title: SmokeLoader analysis
 published: 2023-10-02
-description: A writeup for Practical Car Hacking CTF Teaser.
+description: A Small blog talk about SmokeLoader.
 tags: [Blogs, Malware]
 category: Blogs
 draft: false

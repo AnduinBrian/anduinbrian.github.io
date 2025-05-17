@@ -1,7 +1,7 @@
 ---
 title: DamCTF - 2025
 published: 2025-05-12
-description: A writeup for DamCTF.
+description: A writeup for DamCTF - 2025.
 tags: [Writeups, DamCTF]
 category: Writeups
 image: pics/damn_ctf_banner.png
@@ -19,7 +19,7 @@ pre.astro-code.github-dark {
 
 ![](pics/ggwp.png)
 
-They release the official writeups for every chall. But I just want to write one for memorize. some people die of nostalgia XD.
+They release the official writeups for every chall... But I just want to write one for memorize. some people die of nostalgia XD.
 
 ## rev/It's data, not data
 
