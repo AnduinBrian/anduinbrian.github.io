@@ -1,10 +1,10 @@
 ---
 title: DamCTF - 2025
 published: 2025-05-12
-description: A writeup for DamCTF - 2025.
-tags: [Writeups, DamCTF]
-category: Writeups
-image: pics/damn_ctf_banner.png
+description: 'A writeup for DamCTF - 2025.'
+tags: ['Writeups', 'DamCTF']
+category: 'Writeups'
+image: 'pics/damn_ctf_banner.png'
 draft: false
 ---
 
