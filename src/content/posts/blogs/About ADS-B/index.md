@@ -267,7 +267,7 @@ iq_data = read_iq_data(file_path, num_samples)
 magnitude = np.abs(iq_data)
 ```
 
-Ok now we need to find the preamble, if we found it, we can extract message bits. We normalize the input with mean and standard deviation to improve correlation. After that we find the correlation between normalized signal and known preamble. Then we calculate the threshold using this formular $threshold = mean(corr) + (2 to 4.5) × std(corr)$. Then return index where correlation is bigger than the threshold.
+Ok now we need to find the preamble, if we found it, we can extract message bits. We normalize the input with mean and standard deviation to improve correlation. After that we find the correlation between normalized signal and known preamble. Then we calculate the threshold using this formular $threshold = mean(corr) + (2 ~ 4.5) × std(corr)$. Then return index where correlation is bigger than the threshold.
 
 ```python
 def detect_preambles(mag_signal, threshold=5):
