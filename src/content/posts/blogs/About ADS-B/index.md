@@ -284,7 +284,7 @@ Where:
 Then return index where correlation is bigger than the threshold.
 
 ```python
-def detect_preambles(mag_signal, threshold=5):
+def detect_preambles(mag_signal):
     preamble = np.array([1,0,1,0,0,0,0,1,0,1,0,0,0,0,0,0])
     norm_signal = (mag_signal - np.mean(mag_signal)) / np.std(mag_signal)
     corr = np.correlate(norm_signal, preamble, mode='valid')
