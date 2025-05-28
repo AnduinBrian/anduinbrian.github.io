@@ -362,4 +362,6 @@ Wallah
 
 You can do everything simply with `dump1090`, but I dont want to be a script kiddle :)
 
+~~**We can spoofing, but I dont want to go to jail :(**~~
+
 ***Gonna update more in future ... if I can XD***
