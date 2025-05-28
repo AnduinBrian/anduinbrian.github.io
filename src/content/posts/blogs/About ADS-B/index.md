@@ -360,7 +360,7 @@ Wallah
 
 ![](pics/result.png)
 
-You can do everything simply with `dump1090`, but I dont want to be a script kiddle :)
+You can do everything easily with `dump1090`, but I dont want to be a script kiddle :)
 
 ~~**We can spoofing, but I dont want to go to jail :(**~~
 
