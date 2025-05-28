@@ -267,7 +267,21 @@ iq_data = read_iq_data(file_path, num_samples)
 magnitude = np.abs(iq_data)
 ```
 
-Ok now we need to find the preamble, if we found it, we can extract message bits. We normalize the input with mean and standard deviation to improve correlation. After that we find the correlation between normalized signal and known preamble. Then we calculate the threshold using this formular $threshold = mean(corr) + (2 ~ 4.5) × std(corr)$. Then return index where correlation is bigger than the threshold.
+Ok now we need to find the preamble, if we found it, we can extract message bits. We normalize the input with mean and standard deviation to improve correlation. After that we find the correlation between normalized signal and known preamble. 
+The threshold for detecting preambles can be calculated as:
+
+$$
+\text{threshold} = \text{mean}(\text{corr}) + k \times \text{std}(\text{corr})
+$$
+
+Where:
+
+- $\text{corr}$ is the correlation result with the ADS-B preamble
+- $\text{mean}(\text{corr})$ is the average correlation value
+- $\text{std}(\text{corr})$ is the standard deviation of the correlation
+- $k$ is a multiplier (typically between 2 and 4.5)
+
+Then return index where correlation is bigger than the threshold.
 
 ```python
 def detect_preambles(mag_signal, threshold=5):
@@ -346,8 +360,6 @@ Wallah
 
 ![](pics/result.png)
 
-You can do everything simply with `dump1090`, but I dont want to be a script kiddle :)<br>
-
-~~**We can `spoofing`, but I dont want to go to jail :(**~~
+You can do everything simply with `dump1090`, but I dont want to be a script kiddle :)
 
 ***Gonna update more in future ... if I can XD***
