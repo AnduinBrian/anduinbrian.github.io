@@ -346,6 +346,8 @@ Wallah
 
 ![](pics/result.png)
 
-You can do everything simply with `dump1090`, but I dont want to be a script kiddle :)
+You can do everything simply with `dump1090`, but I dont want to be a script kiddle :)<br>
+
+~~**We can `spoofing`, but I dont want to go to jail :(**~~
 
 ***Gonna update more in future ... if I can XD***
