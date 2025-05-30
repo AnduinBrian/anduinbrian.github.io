@@ -313,7 +313,7 @@ def extract_bits(signal, start_index, msg_length=112):
     return bits
 ```
 
-So far so good, now lets check the header with `10001 = 17` and `101 = 3` or `10001101 = 0x8D`. One more thing, we need to verify the message. Remember there is a CRC and parity bit ?? We can use that.
+So far so good, now lets check the header with `10001 = 17` and `101 = 5` or `10001101 = 0x8D`. One more thing, we need to verify the message. Remember there is a CRC and parity bit ?? We can use that.
 
 ```python
 def compute_crc(message):
