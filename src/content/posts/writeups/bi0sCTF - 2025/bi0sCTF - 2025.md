@@ -517,6 +517,6 @@ for i in data_arr:
 print("[+] Got max speed: %f" % max)
 ```
 
-Flag: `bi0s{65.13_35779486_CA43ABBE}`
+Flag: `bi0s{65.13kph_35779486_CA43ABBE}`
 
 *To be continued...*
