@@ -236,10 +236,28 @@ You can see the first value `66` doesn't change, because the car just moving arr
 + 8 -> 14: `GPS_Latitude_Minutes`
 + 14 -> 28: `GPS_Latitude_Min_dec`
 
+```
++------------------------+------------------------+-----------------------+----
+|  GPS_Latitude_Degrees  |  GPS_Latitude_Minutes  |  GPS_Latitude_Min_dec | ... 
++------------------------+------------------------+-----------------------+----
+|        8-bytes         |         6-bytes        |       14-bytes        | ...
++------------------------+------------------------+-----------------------+----
+0                        8                        14                      28   
+```
+
 For Longitude, you can see the `X8 1A` wont change, so I use the same way to extract it:
 + 28 -> 37: `GPS_Longitude_Degrees`
 + 37 -> 43: `GPS_Longitude_Minutes`
 + 43 -> 57: `GPS_Longitude_Min_dec`
+
+```
+----+--------------------------+-------------------------+------------------------+----
+... |  GPS_Longitutde_Degrees  |  GPS_Longitude_Minutes  |  GPS_Longitude_Min_dec | ... 
+----+--------------------------+-------------------------+------------------------+----
+... |          9-bytes         |         6-bytes         |        14-bytes        | ...
+----+--------------------------+-------------------------+------------------------+----
+    28                         37                        43                       57   
+```
 
 The result:
 ```
