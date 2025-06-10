@@ -16,8 +16,6 @@ The CAN bus log is here: [Attached](/writeups_file_attached/damnctf_2025/canlog.
 
 ### lost-in-madras
 
-#### Finding the VIN
-
 >I recently visited Madras... and I got carjacked T.T<br>
 >Luckily, I had a wireless OBD adapter connected to my car through which I was able to obtain the CAN log for the whole journey. It's so unfortunate that I can't make sense of the log.<br>
 > + To confirm that it is mine, find the VIN for my car.
@@ -31,6 +29,8 @@ The task is clear: find the VIN and locate the car. The log is large, and its st
 |  CAN Interface  |  CAN-ID  |  MSG Length |      MSG       |
 +-----------------+----------+-------------+----------------+
 ```
+
+#### Finding the VIN
 
 Since the VIN is a 17-character alphanumeric string, it contains information about the vehicle such as the model, country, year... I write a `string_dumper` for this task.
 
