@@ -217,7 +217,7 @@ $$
 
 But its weird, very weird. I can't get the correct lat/long, the result I got when I followed the bit offset in DBC file is `(-81.96282, -164.24957)`. So maybe our DBC is wrong or something else ?? (~~*this is the part that hold me*~~).<br>
 After the CTF end, some ppl share about the correct [DBC](https://docs.google.com/spreadsheets/d/1Oumkq83oMC7sUsSIggGv-BK4hmQbXqV5Lp1j2pPncLE/edit?gid=615387281#gid=615387281). So I try again !! This time it gives `(13.07606, -126.85976)`, point to somewhere in the middle of the ocean.<br>
-Hmm thats weird, but we got the almost correct `latitude` (Madras - `(13.0843° N, 80.2705° E)`). I start guessing the bit position, we have 9 data:
+Hmm thats weird, but we got the `latitude` almost correct (Madras - `(13.0843° N, 80.2705° E)`). I start guessing the bit position, we have 9 data:
 
 ```
 vcan2  465   [8]  66 16 1A 08 1A 2B AE 00	f....+..
