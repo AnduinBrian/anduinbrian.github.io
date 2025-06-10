@@ -177,7 +177,7 @@ The number followed by `BO_` is the CAN-ID. In the log we have `0x465 (1125)`, i
     + `25|2`: Bit start | Length.
     + `@0`: byte order, `@0` for big-endian/Motorola, `@1` for little-endian/Intel.
     + `+`: unsigned, `-` for signed.
-    + `(1,0)`: (scale,offset), the values are used in the physical value linear equation `(scale * data) + offset`.
+    + `(1,0)`: (scale,offset), the values are used in the physical value linear equation.
     + `[0|0]`: min | max, can be set to [0|0] - not defined.
     + `XXX`: Receiver node name.
 
@@ -194,16 +194,16 @@ binary:
 Write a script to extract those bit. Remember to use those scale and offset, the formula is: 
 
 $$
-\text{data} = \text{scale} \times \text{data} + \text{offset}
+data = scale \times data + offset
 $$
 
 Then we calculate the `latitude` and `longitude` with this formula:
 
 $$
-\text{Latitude} = \text{Degrees} + \frac{\text{Minutes} + \text{Minute\_Decimals}}{60}
+Latitude = Degrees + \frac{Minutes + Minutes\_Decimals}{60}
 $$
 
-But its weird, very weird. I can't get the correct lat/long, the result I got when I follow bit offset in DBC is `(-81.96282, -164.24957)`. So maybe our DBC is wrong (this is the part that hold me).<br>
+But its weird, very weird. I can't get the correct lat/long, the result I got when I follow bit offset in the DBC is `(-81.96282, -164.24957)`. So maybe our DBC is wrong or something else ?? (~~*this is the part that hold me*~~).<br>
 After the CTF end, some ppl share about the correct [DBC](https://docs.google.com/spreadsheets/d/1Oumkq83oMC7sUsSIggGv-BK4hmQbXqV5Lp1j2pPncLE/edit?gid=615387281#gid=615387281). So I try again !! This time it gives `(13.07606, -126.85976)`, point to somewhere in the middle of the ocean.<br>
 Hmm thats weird. I start guessing the bit position, we have 9 data:
 
@@ -220,7 +220,7 @@ vcan2  465   [8]  66 0D F4 48 1A 0E DD 00	f..H....
 CAN-ID 0x465 - Total: 9
 ```
 
-You can see the first value `66` doesn't change, because the car just moving arround Madras therefor the degrees won't be change ?? So I think, the first byte would be our `GPS_Latitude_Degrees`. To extract the `GPS_Latitude_Minutes` we simply take the `GPS_Latitude_Degrees` bit offset, add it with `8 - the size of GPS_Latitude_Degrees`, do the same for `GPS_Latitude_Min_dec`. To sum up:
+You can see the first value `66` doesn't change, because the car just moving arround Madras therefor the degrees won't be change, right ?? So I think, the first byte would be our `GPS_Latitude_Degrees`. To extract the `GPS_Latitude_Minutes` we simply take the `GPS_Latitude_Degrees` bit offset, add it with `8 - the size of GPS_Latitude_Degrees`, do the same for `GPS_Latitude_Min_dec`. To sum up:
 + 0 -> 8: `GPS_Latitude_Degrees`
 + 8 -> 14: `GPS_Latitude_Minutes`
 + 14 -> 28: `GPS_Latitude_Min_dec`
@@ -313,7 +313,7 @@ Flag: `bi0s{1FMHK7D82BGA34954_M. A. Chidambaram Stadium}`
 >(Based on the same CAN log as lost-in-madras)<br>
 >Example flag: bi0s{12.23kph_DEADBEEF_CAFEBABE}<br>
 
-This challenge ask for 2 part:
+This challenge ask us to find the answer for 2 question:
 + The Security level 15 SEED and Key.
 + Top speed the car achieved.
 
@@ -327,7 +327,7 @@ First, the client will send a `seed request` to the ECU, then the ECU responds w
 So in this case, the process should look like:
 + Step 1: Client use `0x733` to send a request for `SEED`. The data should be `XX 27 15 ...` because we use `Security level 15`.
 + Step 2: ECU return a `SEED` after the request packet. The data should be `XX 67 15 <SEED>`.
-+ Step 3: Client calculate the key and send back to the ECU. Data will be `XX 27 16 <KEY>`, 2nd bytes is `Security level + 1`.
++ Step 3: Client calculate the key and send back to the ECU. Data will be `XX 27 16 <KEY>`, 2nd-bytes is `Security level + 1`.
 + Step 4: ECU accept the key, and send back something like `XX 67 16 00 00 00 ...`.
 
 We need to pair the requests and responds, then we find out when the ECU accept the key.
@@ -459,13 +459,19 @@ vcan1  423   [5]  4F 3E 00 00 00			O>...
 vcan1  423   [5]  5A 3E 00 00 00			Z>...
 ```
 
-You can see the `3E` is consistent, the formula to get the speed is (remember to apply the (scale,offset)):
+You can see the `3E` is consistent, the formula to get the speed is:
 
 $$
-\text{real\_speed} = \text{speed}_1 \times 256 + \text{speed}_2
+\text{real\_speed} = speed_1 \times 256 + speed_2
 $$
 
-Seem like the 2nd bytes is the speed_1, and the 1st bytes is the speed_2. So I modified the DBC, here is the final DBC I used. At this point, I think the author messing with us, he was doing something with the bit/byte-order.
+Then we apply the `(scale, offset)`:
+
+$$
+\text{real\_speed} = scale \times \text{real\_speed} + \text{offset}
+$$
+
+Seem like the 2nd-byte is the speed_1, and the 1st-byte is the speed_2. So I modified the DBC, here is the final DBC I used. At this point, I think the author messing with us, he was doing something with the bit/byte-order.
 
 ```
 BO_ 1059 Engine_Data_MS: 5 XXX
