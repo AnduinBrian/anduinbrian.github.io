@@ -120,7 +120,7 @@ Seem like we found the VIN `1FMHK7D82BGA34954`. Look good right !! (you can look
 
 #### Finding the lastest location
 
-We got the info of the car, we need to search for some DBC (CAN database) to translates the raw CAN data into meaningful signals (like RPM, temperature,...). So I googled for `Ford 2011 DBC`, it led me to this project.
+We got the info of the car, we need to search for some DBC (CAN database) to translates "raw" CAN data into meaningful signals (like RPM, temperature,...). So I googled for `Ford 2011 DBC`, it led me to this project.
 
 ::github{repo="commaai/opendbc"}
 
