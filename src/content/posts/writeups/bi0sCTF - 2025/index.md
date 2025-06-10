@@ -430,7 +430,7 @@ BO_ 1059 Engine_Data_MS: 8 XXX
  SG_ Fuel_Level_State_UB : 37|1@0+ (1,0) [0|0] "" XXX
 ```
 
-Lets extract bit from `7->23` for the vehicle speed. But we have too many line of data, we need an efficient way to parse it. Lets me introduce you, the `cantools`.
+Lets extract bit from `7->23` for the vehicle speed. But we have too many line of data, we need an efficient way to decode it. Lets me introduce you, the `cantools`.
 
 ::github{repo="cantools/cantools"}
 
