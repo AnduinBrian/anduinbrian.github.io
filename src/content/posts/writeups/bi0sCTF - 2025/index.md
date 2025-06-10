@@ -86,7 +86,7 @@ with open("canlog.txt", "r") as file:
     can_id_arr.sort()
 
 if len(sys.argv) == 1:
-    print("[+] Print sort all !!")
+    print("[+] Dump all !!")
     for i in can_id_arr:
         print("0x%x" % i)
         get_message_by_can(data, i)
@@ -113,7 +113,7 @@ vcan0  73B   [8]  22 47 41 33 34 39 35 34    "GA34954
 ```
 
 Seem like we found the VIN `1FMHK7D82BGA34954`. Look good right !! (You can look for the request contains `F1 90` then pair it the reponse).<br>
-*NGL: first few hours I though this challenge was about some Honda car 💀 because the `JHM` string.*
+*NGL: first few hours I though this challenge was about some Honda car because the `JHM` string.* 💀
 
 ![](pics/vin_parse.png)
 
@@ -333,7 +333,7 @@ First, the client will send a request for `SEED` to the ECU, then the ECU respon
 
 ![](pics/authen.png)
 
-So in this case, the process should look like:
+So in this case, the process should look like this:
 + Step 1: Client use `0x733` to send a request for `SEED`. The data should be `XX 27 15 ...` because we use `Security level 15`.
 + Step 2: ECU return a `SEED` after the request packet. The data should be `XX 67 15 <SEED>`.
 + Step 3: Client calculate the key and send back to the ECU. Data will be `XX 27 16 <KEY>`, 2nd-bytes is `Security level + 1`.
@@ -400,7 +400,7 @@ vcan0  733   [8]  06 27 16 23 BC AD 69 00    .'.#..i.
 
 Only the 5th has the accept packet, so `SEED` is `35779486` and `KEY` is `CA43ABBE`.
 
-#### The Speed
+#### Finding top speed
 
 Based on the `ford_cgea1_2_bodycan_2011.dbc` we know the CAN-ID for Engine_Data is `1059 (0x423)`. The detail:
 
@@ -412,11 +412,11 @@ BO_ 1059 Engine_Data_MS: 8 XXX
  SG_ Fuel_Level_State_UB : 37|1@0+ (1,0) [0|0] "" XXX
 ```
 
-Lets extract bit from `7->23` for the vehicle speed. But we have too much data, we need an efficient way to parse it. Lets me introduce you, the `cantools`.
+Lets extract bit from `7->23` for the vehicle speed. But we have too many line of data, we need an efficient way to parse it. Lets me introduce you, the `cantools`.
 
 ::github{repo="cantools/cantools"}
 
-Example script to decode the message:
+We load the DBC file in, and use `cantools` to decode the message. Example script to decode the message:
 
 ```
 import cantools
@@ -457,7 +457,7 @@ decoded = db.decode_message(1059, data)
 print("Decoded Message:", decoded)
 ```
 
-I tried few data, but the speed is very insane (above 300+ km/h). So maybe the we need to modify the DBC. I use the same approach (guessing bit pos) I mentioned above. Here is few data of `0x423`:
+I tried few data, but the speed is very insane (above 300+ km/h probably ilegal in every country XD). So maybe the we need to modify the DBC. I use the same approach (guessing bit pos) I mentioned above. Here is few data of `0x423`:
 
 ```
 vcan1  423   [5]  22 3E 00 00 00			">...
@@ -468,7 +468,7 @@ vcan1  423   [5]  4F 3E 00 00 00			O>...
 vcan1  423   [5]  5A 3E 00 00 00			Z>...
 ```
 
-You can see the `3E` is consistent, the formula to get the speed is (just to merge 2 bytes to 1 byte):
+You can see the `3E` is consistent, the formula (just to merge 2 bytes to 1 byte) to get the speed is:
 
 $$
 \text{real\_speed} = speed_1 \times 256 + speed_2
@@ -480,14 +480,15 @@ $$
 \text{real\_speed} = scale \times \text{real\_speed} + \text{offset}
 $$
 
-Seem like the 2nd-byte is the speed_1, and the 1st-byte is the speed_2. So I modified the DBC, here is the final DBC I used. At this point, I think the author messing with us, he was doing something with the bit/byte-order.
+Seem like the 2nd-byte is the speed_1, and the 1st-byte is the speed_2. So I modified the DBC, here is the final DBC I used. 
 
 ```
 BO_ 1059 Engine_Data_MS: 5 XXX
  SG_ VEH_SPD : 0|16@1+ (0.01,-100.0) [0|0] "KPH" XXX
 ```
 
-The `VEH_SPD` is modifed, start at `0`, size is `16` and using `@1+` for little-endian instead of `@0+`.
+The `VEH_SPD` is modifed, start at `0`, size is `16` and using `@1+` for little-endian instead of `@0+`.<br>
+At this point, I think the author messing with us, he was doing something with the bit/byte-order.
 
 ```
 import cantools
