@@ -467,7 +467,7 @@ vcan1  423   [5]  4F 3E 00 00 00			O>...
 vcan1  423   [5]  5A 3E 00 00 00			Z>...
 ```
 
-You can see the `3E` is consistent, the formula to get the speed is:
+You can see the `3E` is consistent, the formula to get the speed is (just to merge 2 bytes to 1 byte):
 
 $$
 \text{real\_speed} = speed_1 \times 256 + speed_2
