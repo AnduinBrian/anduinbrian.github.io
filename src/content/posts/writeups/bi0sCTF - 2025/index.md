@@ -86,7 +86,7 @@ with open("canlog.txt", "r") as file:
         get_message_by_can(data, i)
 ```
 
-The author said that he used OBD-2 to dump this log. So I started looking for documentation about PIDs and CAN-IDs. The document stated:
+The author said that he used `OBD-2` to dump this log. So I started looking for documentation about PIDs and CAN-IDs. The document stated:
 + CAN-ID 0x7DF: Broadcast ID, meaning all ECUs will listen and respond if the request is relevant to them.
 + CAN-ID 0x7E8 to 0x7EF: response ID for the Engine Control Module (ECM), other modules may respond with 0x7E9 to 0x7EF.
 
@@ -102,7 +102,7 @@ vcan0  73B   [8]  21 48 4B 37 44 38 32 42    !HK7D82B
 vcan0  73B   [8]  22 47 41 33 34 39 35 34    "GA34954
 ```
 
-Seem like we found the VIN `1FMHK7D82BGA34954`. Look good right !! (You can look for the request contains `F1 90` then pair it the reponse). NGL: first few hours I though this challenge is about some Honda car 💀 because the `JHM` string.
+Seem like we found the VIN `1FMHK7D82BGA34954`. Look good right !! (You can look for the request contains `F1 90` then pair it the reponse). NGL: first few hours I though this challenge was about some Honda car 💀 because the `JHM` string.
 
 ![](pics/vin_parse.png)
 
@@ -112,7 +112,7 @@ We got the info of the car, we need to search for some DBC (CAN database) to tra
 
 ::github{repo="commaai/opendbc"}
 
-Structure of a DBC File:
+We need to know about structure of a DBC File:
 
 | Component | Description                                                               |
 | --------- | ------------------------------------------------------------------------- |
@@ -163,12 +163,12 @@ BO_ 1144 GPS_Data_Nav_4: 8 XXX
  SG_ VehHead_An_Est : 7|16@0+ (0.01,0) [0|0] "degrees" XXX
 ```
 
-The number followed by `BO_` is the CAN-ID. In the log we have 0x465 (1125), it should be our GPS data. We still need to understand what signal will be sent. Lets examine few first line of 0x465 CAN-ID in DBC file.
+The number followed by `BO_` is the CAN-ID. In the log we have `0x465 (1125)`, it should be our GPS data. We still need to understand what signal will be sent. Lets examine few first line of 0x465 CAN-ID in DBC file.
 + BO_ 1125 GPS_Data_Nav_1: 8 XXX.
     + `BO_`: Message Syntax.
     + `1125`: CAN-ID (dec).
     + `GPS_Data_Nav_1`: Name.
-    + `8`: Length (Bytes).
+    + `8`: Length (Bytes).<br>
 + SG_ GpsHsphLattSth_D_Actl : 25|2@0+ (1,0) [0|0] "" XXX
     + `SG_`: Signal Syntax.
     + `GpsHsphLattSth_D_Actl`: Name.
@@ -179,7 +179,7 @@ The number followed by `BO_` is the CAN-ID. In the log we have 0x465 (1125), it 
     + `[0|0]`: min | max, can be set to [0|0] - not defined.
     + `XXX`: Receiver node name.
 
-Okay now we need to parse the CAN data for some GPS data. Lets examine the lastest 0x465 data:
+Okay now we need to parse the CAN data for some GPS data. Lets examine the lastest `0x465` data:
 ```
 vcan2  465   [8]  66 0D F4 48 1A 0E DD 00	f..H....
 
@@ -200,7 +200,7 @@ $$
 \text{Latitude} = \text{Degrees} + \frac{\text{Minutes} + \text{Minute\_Decimals}}{60}
 $$
 
-But its weird, very weird. I can't get the correct lat/long, the result i got when I use the correct bit offset is `(-81.96282, -164.24957)`. So maybe our DBC is wrong (this is the part that hold me).<br>
+But its weird, very weird. I can't get the correct lat/long, the result I got when I follow bit offset in DBC is `(-81.96282, -164.24957)`. So maybe our DBC is wrong (this is the part that hold me).<br>
 After the CTF end, some ppl share about the correct [DBC](https://docs.google.com/spreadsheets/d/1Oumkq83oMC7sUsSIggGv-BK4hmQbXqV5Lp1j2pPncLE/edit?gid=615387281#gid=615387281). So I try again !! This time it gives `(13.07606, -126.85976)`, point to somewhere in the middle of the ocean.<br>
 Hmm thats weird. I start guessing the bit position, we have 9 data:
 
@@ -291,7 +291,7 @@ def decode_gps(data):
     print("[+] GPS_LON_MIN_DEC = %.5f" % gps_longitude_min_dec)
 
     print("")
-    print("[+] Result: %.5f, %5f" % (latitude, longitude))
+    print("[+] Result: %f, %f" % (latitude, longitude))
 
 
 data = "660DF4481A0EDD00"
@@ -317,17 +317,17 @@ This challenge ask for 2 part:
 #### The SEED and KEY
 
 A UDS (Unified Diagnostic Services) request seed is part of a security access mechanism in the UDS protocol. This is typically part of SecurityAccess service (0x27).<br>
-First, the client will send a `seed request` to the ECU, then the ECU responds with a `SEED`. Client use the `SEED` to gen a `KEY` and send it back to the ECU. If ECU accept the `KEY` (`KEY` is good), ECU send accept code and grants access to protected services.
+First, the client will send a `seed request` to the ECU, then the ECU responds with a `SEED`. Client use the `SEED` to gen a `KEY` and send it back to the ECU. If ECU accept the `KEY` (`KEY` is good/correct), ECU send back the accept code and grants access to protected services.
 
 ![](pics/authen.png)
 
-So in this case, the step should be:
-+ Step 1: Client use `0x733` to send a request for `SEED`. The data should be `27 15 ...` because we use `Security level 15`.
-+ Step 2: ECU return a `SEED` after the request packet. The data should be `67 15 <SEED>`.
-+ Step 3: Client calculate the key and send back to the ECU. Data will be `27 16 <KEY>`, 2nd bytes is `Security level + 1`.
-+ Step 4: ECU accept the key, and send back something like `67 16 00 00 00 ...`.
+So in this case, the process should look like:
++ Step 1: Client use `0x733` to send a request for `SEED`. The data should be `XX 27 15 ...` because we use `Security level 15`.
++ Step 2: ECU return a `SEED` after the request packet. The data should be `XX 67 15 <SEED>`.
++ Step 3: Client calculate the key and send back to the ECU. Data will be `XX 27 16 <KEY>`, 2nd bytes is `Security level + 1`.
++ Step 4: ECU accept the key, and send back something like `XX 67 16 00 00 00 ...`.
 
-We need to pair the requests and responds, then we find out when the ECU accept that key.
+We need to pair the requests and responds, then we find out when the ECU accept the key.
 
 ```
 1:
@@ -361,7 +361,6 @@ vcan0  73B   [8]  06 67 15 35 77 94 86 00    .g.5w...
 vcan0  733   [8]  06 27 16 CA 43 AB BE 00    .'..C...
 vcan0  73B   [8]  02 67 16 00 00 00 00 00    .g......
 
-
 6:
 vcan0  733   [8]  02 27 15 00 00 00 00 00    .'......
 vcan0  73B   [8]  06 67 15 44 78 58 31 00    .g.DxX1.
@@ -387,11 +386,11 @@ vcan0  73B   [8]  06 67 15 71 68 43 89 00    .g.qhC..
 vcan0  733   [8]  06 27 16 23 BC AD 69 00    .'.#..i.
 ```
 
-Only the 5th has accept packet, so `SEED` is `35779486` and `KEY` is `CA43ABBE`.
+Only the 5th has the accept packet, so `SEED` is `35779486` and `KEY` is `CA43ABBE`.
 
 #### The Speed
 
-Based on the `ford_cgea1_2_bodycan_2011.dbc` we know the CAN-ID for Engine_Data is `1059 (0x423)`. The detail like:
+Based on the `ford_cgea1_2_bodycan_2011.dbc` we know the CAN-ID for Engine_Data is `1059 (0x423)`. The detail looks like:
 
 ```
 BO_ 1059 Engine_Data_MS: 8 XXX
@@ -401,7 +400,7 @@ BO_ 1059 Engine_Data_MS: 8 XXX
  SG_ Fuel_Level_State_UB : 37|1@0+ (1,0) [0|0] "" XXX
 ```
 
-Lets extract bit from `7->23` for the vehicle speed. But we have too much data; we need an efficient way to parse it. Lets me introduce you, the `cantools`.
+Lets extract bit from `7->23` for the vehicle speed. But we have too much data, we need an efficient way to parse it. Lets me introduce you, the `cantools`.
 
 ::github{repo="cantools/cantools"}
 
@@ -463,7 +462,7 @@ $$
 \text{real\_speed} = \text{speed}_1 \times 256 + \text{speed}_2
 $$
 
-Seem like the 2nd bytes is the speed_1, and the 1st bytes is the speed_2. So I modified the DBC, here is the final DBC I used.
+Seem like the 2nd bytes is the speed_1, and the 1st bytes is the speed_2. So I modified the DBC, here is the final DBC I used. At this point, I think the author messing with us, he was doing something with the bit/byte-order.
 
 ```
 BO_ 1059 Engine_Data_MS: 5 XXX
