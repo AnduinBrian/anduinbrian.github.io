@@ -3,7 +3,7 @@ title: bi0sCTF - 2025
 published: 2025-06-09
 description: 'A writeup for hardware tasks in bi0sCTF - 2025.'
 image: 'pics/cover.png'
-tags: ['Writeups', 'bi0sCTF','Automotive']
+tags: ['Writeups', 'bi0sCTF','Automotive','Hardware']
 category: 'Writeups'
 draft: false 
 ---
