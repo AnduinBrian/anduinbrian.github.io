@@ -12,7 +12,7 @@ draft: false
 
 ## CAN BUS log challenge
 
-The CAN bus log is here: [Attached](/writeups_file_attached/damnctf_2025/canlog.txt).
+The CAN bus log is here: [attached](/writeups_file_attached/damnctf_2025/canlog.txt).
 
 ### lost-in-madras
 
