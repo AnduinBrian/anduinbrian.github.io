@@ -508,7 +508,7 @@ BO_ 1059 Engine_Data_MS: 5 XXX
 The `VEH_SPD` is modifed, start at `0`, size is `16` and using `@1+` for little-endian instead of `@0+`.<br>
 At this point, I think the author messing with us, he was doing something with the bit/byte-order.
 
-```
+```python
 import cantools
 
 dbc_string = """
