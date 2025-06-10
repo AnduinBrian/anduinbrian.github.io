@@ -475,7 +475,7 @@ decoded = db.decode_message(1059, data)
 print("Decoded Message:", decoded)
 ```
 
-I tried few data, but the speed is very insane (above 300+ km/h probably ilegal in every country XD). So maybe the we need to modify the DBC. I use the same approach (guessing bit pos) I mentioned above. Here is few data of `0x423`:
+I tried few data, but the speed is very insane (above 300+ km/h probably ilegal in every country XD). So maybe the DBC file is wrong again and we need to modify it. I use the same approach (guessing bit pos) I mentioned above. Here is few data of `0x423`:
 
 ```
 vcan1  423   [5]  22 3E 00 00 00			">...
