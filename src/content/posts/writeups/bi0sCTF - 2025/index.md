@@ -23,7 +23,7 @@ The CAN bus log is here: [attached](/writeups_file_attached/damnctf_2025/canlog.
 >
 >Example flag: bi0s{1FTFW1R6XBFB08616_Eiffel Tower}
 
-The task is clear: find the VIN and the latest location of the car. The log is large, and it's structure:
+The task is clear: find the VIN and the latest location of the car. The log is too large, and it's structure is:
 
 ```
 +-----------------+----------+-------------+----------------+
