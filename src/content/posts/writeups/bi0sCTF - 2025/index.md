@@ -486,7 +486,7 @@ vcan1  423   [5]  4F 3E 00 00 00			O>...
 vcan1  423   [5]  5A 3E 00 00 00			Z>...
 ```
 
-You can see the `3E` is consistent, the formula (just to merge 2 bytes to 1 byte) to get the speed is:
+You can see the `3E` is consistent, the formula (just to merge `2 bytes` into a `WORD`) to get the speed is:
 
 $$
 \text{real\_speed} = speed_1 \times 256 + speed_2
