@@ -177,11 +177,12 @@ The number followed by `BO_` is the CAN-ID. In the log we have `0x465 (1125)`, i
     + `25|2`: Bit start | Length.
     + `@0`: byte order, `@0` for big-endian/Motorola, `@1` for little-endian/Intel.
     + `+`: unsigned, `-` for signed.
-    + `(1,0)`: (scale,offset), the values are used in the physical value linear equation.
+    + `(1,0)`: (scale,offset), the values are used in the physical value linear equation `(scale * data) + offset`.
     + `[0|0]`: min | max, can be set to [0|0] - not defined.
     + `XXX`: Receiver node name.
 
 Okay now we need to parse the CAN data for some GPS data. Lets examine the lastest `0x465` data:
+
 ```
 vcan2  465   [8]  66 0D F4 48 1A 0E DD 00	f..H....
 
