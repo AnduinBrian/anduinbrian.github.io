@@ -23,7 +23,7 @@ The CAN bus log is here: [attached](/writeups_file_attached/damnctf_2025/canlog.
 >
 >Example flag: bi0s{1FTFW1R6XBFB08616_Eiffel Tower}
 
-The task is clear: find the VIN and the latest location of the car. The log is large, and its structure is as follows:
+The task is clear: find the VIN and the latest location of the car. The log is large, and it's structure:
 
 ```
 +-----------------+----------+-------------+----------------+
@@ -215,7 +215,7 @@ $$
 Latitude = Degrees + \frac{Minutes + Minutes\_Decimals}{60}
 $$
 
-But its weird, very weird. I can't get the correct lat/long, the result I got when I followed the bit offset in DBC file is `(-81.96282, -164.24957)`. So maybe our DBC is wrong or something else ?? (~~*this is the part that hold me*~~).<br>
+But it's weird, very weird. I can't get the correct lat/long, the result I got when I followed the bit offset in DBC file is `(-81.96282, -164.24957)`. So maybe our DBC is wrong or something else ?? (~~*this is the part that hold me*~~).<br>
 After the CTF end, some ppl share about the correct [DBC](https://docs.google.com/spreadsheets/d/1Oumkq83oMC7sUsSIggGv-BK4hmQbXqV5Lp1j2pPncLE/edit?gid=615387281#gid=615387281). So I try again !! This time it gives `(13.07606, -126.85976)`, point to somewhere in the middle of the ocean.<br>
 Hmm thats weird, but we got the `latitude` almost correct (Madras - `(13.0843° N, 80.2705° E)`). I start guessing the bit position, we have 9 data:
 
