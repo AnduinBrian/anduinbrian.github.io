@@ -200,7 +200,7 @@ $$
 \text{Latitude} = \text{Degrees} + \frac{\text{Minutes} + \text{Minute\_Decimals}}{60}
 $$
 
-But its weird, very weird. I cant get the correct lat/long, the result i got when I use the correct bit offset is `(-81.96282, -164.24957)`. So maybe our DBC is wrong (this is the part that hold me).<br>
+But its weird, very weird. I can't get the correct lat/long, the result i got when I use the correct bit offset is `(-81.96282, -164.24957)`. So maybe our DBC is wrong (this is the part that hold me).<br>
 After the CTF end, some ppl share about the correct [DBC](https://docs.google.com/spreadsheets/d/1Oumkq83oMC7sUsSIggGv-BK4hmQbXqV5Lp1j2pPncLE/edit?gid=615387281#gid=615387281). So I try again !! This time it gives `(13.07606, -126.85976)`, point to somewhere in the middle of the ocean.<br>
 Hmm thats weird. I start guessing the bit position, we have 9 data:
 
@@ -217,7 +217,7 @@ vcan2  465   [8]  66 0D F4 48 1A 0E DD 00	f..H....
 CAN-ID 0x465 - Total: 9
 ```
 
-You can see the first value `0x66` dont change, because the car just moving arround Madras therefor the degrees wont be change ?? So I think, the first byte would be our `GPS_Latitude_Degrees`. To extract the `GPS_Latitude_Minutes` we simply take the `GPS_Latitude_Degrees` bit offset, add it with `8 - the size of GPS_Latitude_Degrees`, do the same for `GPS_Latitude_Min_dec`. To sum up:
+You can see the first value `66` doesn't change, because the car just moving arround Madras therefor the degrees won't be change ?? So I think, the first byte would be our `GPS_Latitude_Degrees`. To extract the `GPS_Latitude_Minutes` we simply take the `GPS_Latitude_Degrees` bit offset, add it with `8 - the size of GPS_Latitude_Degrees`, do the same for `GPS_Latitude_Min_dec`. To sum up:
 + 0 -> 8: `GPS_Latitude_Degrees`
 + 8 -> 14: `GPS_Latitude_Minutes`
 + 14 -> 28: `GPS_Latitude_Min_dec`
