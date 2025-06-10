@@ -87,12 +87,12 @@ with open("canlog.txt", "r") as file:
 ```
 
 The author said that he used `OBD-2` to dump this log. So I started looking for documentation about PIDs and CAN-IDs. The document stated:
-+ CAN-ID 0x7DF: Broadcast ID, meaning all ECUs will listen and respond if the request is relevant to them.
-+ CAN-ID 0x7E8 to 0x7EF: response ID for the Engine Control Module (ECM), other modules may respond with 0x7E9 to 0x7EF.
++ CAN-ID `0x7DF`: Broadcast ID, meaning all ECUs will listen and respond if the request is relevant to them.
++ CAN-ID `0x7E8` to `0x7EF`: response ID for the Engine Control Module (ECM), other modules may respond with `0x7E9` to `0x7EF`.
 
 But in this log, we don't see any CAN-IDs similar. So maybe it used a custom CAN (Oh man !! I hate this). The CAN-IDs `7xx` look quite interesting. As far as I’ve analyzed, I’ve realized the following:
-+ CAN-ID 0x733: The request.
-+ CAN-ID 0x73B: The response.
++ CAN-ID `0x733`: The request.
++ CAN-ID `0x73B`: The response.
 
 Just aim the `0x73B` we found some interesting string.
 
