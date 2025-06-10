@@ -245,7 +245,7 @@ You can see the first value `66` doesn't change, because the car just moving arr
 0                        8                        14                      28   
 ```
 
-For Longitude, you can see the `X8 1A` wont change, so I use the same way to extract it:
+For Longitude, you can see the `X8 1A` won't change, so I use the same way to extract it:
 + 28 -> 37: `GPS_Longitude_Degrees`
 + 37 -> 43: `GPS_Longitude_Minutes`
 + 43 -> 57: `GPS_Longitude_Min_dec`
