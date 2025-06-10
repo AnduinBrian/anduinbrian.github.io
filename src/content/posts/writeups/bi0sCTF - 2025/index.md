@@ -1,4 +1,4 @@
-9---
+---
 title: bi0sCTF - 2025
 published: 2025-06-09
 description: 'A writeup for hardware tasks in bi0sCTF - 2025.'
