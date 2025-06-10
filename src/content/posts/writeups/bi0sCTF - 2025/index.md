@@ -341,7 +341,7 @@ Flag: `bi0s{1FMHK7D82BGA34954_M. A. Chidambaram Stadium}`
 >Example flag: bi0s{12.23kph_DEADBEEF_CAFEBABE}<br>
 
 This challenge ask us to find the answer for 2 question:
-+ The Security level 15 SEED and Key.
++ The Security level 15 `SEED` and `KEY`.
 + Top speed the car achieved.
 
 #### The SEED and KEY
