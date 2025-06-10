@@ -113,7 +113,7 @@ vcan0  73B   [8]  21 48 4B 37 44 38 32 42    !HK7D82B
 vcan0  73B   [8]  22 47 41 33 34 39 35 34    "GA34954
 ```
 
-Seem like we found the VIN `1FMHK7D82BGA34954`. Look good right !! (You can look for the request contains `F1 90` then pair it with the response).<br>
+Seem like we found the VIN `1FMHK7D82BGA34954`. Look good right !! (you can look for the request contains `F1 90` then pair it with the response).<br>
 *NGL: first few hours I though this challenge was about some Honda car because the `JHM` string.* 💀
 
 ![](pics/vin_parse.png)
