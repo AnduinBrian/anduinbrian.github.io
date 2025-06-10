@@ -35,6 +35,8 @@ The task is clear: find the VIN and locate the car. The log is large, and its st
 Since the VIN is a 17-character alphanumeric string, it contains information about the vehicle such as the model, country, year... I write a `string_dumper` for this task.
 
 ```python
+import sys
+
 def get_all_CANID(data):
     can_id_arr = []
     for i in data:
@@ -64,7 +66,7 @@ def get_message_by_can(data, can_id):
                 print(i + "\t" + dump_string)
             elif size == 7:
                 print(i + "\t\t" + dump_string)
-            elif size > 5 and size < 7:
+            elif size >= 5 and size < 7:
                 print(i + "\t\t\t" + dump_string)
             elif size == 4:
                 print(i + "\t\t\t\t" + dump_string)     
@@ -75,15 +77,23 @@ def get_message_by_can(data, can_id):
     print("CAN-ID 0x%x - Total: %d" % (can_id,count))
     print("")
 
+
 with open("canlog.txt", "r") as file:
     data = []
     for line in file:
         data.append(line.strip())
     can_id_arr = get_all_CANID(data)
     can_id_arr.sort()
+
+if len(sys.argv) == 1:
+    print("[+] Print sort all !!")
     for i in can_id_arr:
         print("0x%x" % i)
         get_message_by_can(data, i)
+else:
+    can_id = int(sys.argv[1], 16)
+    print("[+] Dump specific CAN-ID 0x%x" % (can_id))
+    get_message_by_can(data, can_id)
 ```
 
 The author said that he used `OBD-2` to dump this log. So I started looking for documentation about PIDs and CAN-IDs. The document stated:
@@ -245,7 +255,6 @@ The result:
 
 Script:
 ```python
-
 import binascii
 
 GPS_lat_deg_bit_off = 0
@@ -293,7 +302,6 @@ def decode_gps(data):
     print("[+] GPS_LON_MIN = %.5f" % gps_longitude_min)
     print("[+] GPS_LON_MIN_DEC = %.5f" % gps_longitude_min_dec)
 
-    print("")
     print("[+] Result: %f, %f" % (latitude, longitude))
 
 
@@ -320,7 +328,7 @@ This challenge ask us to find the answer for 2 question:
 #### The SEED and KEY
 
 A UDS (Unified Diagnostic Services) request seed is part of a security access mechanism in the UDS protocol. This is typically part of SecurityAccess service (0x27).<br>
-First, the client will send a `seed request` to the ECU, then the ECU responds with a `SEED`. Client use the `SEED` to gen a `KEY` and send it back to the ECU. If ECU accept the `KEY` (`KEY` is good/correct), ECU send back the accept code and grants access to protected services.
+First, the client will send a request for `SEED` to the ECU, then the ECU responds with a `SEED`. Client use the `SEED` to gen a `KEY` and send it back to the ECU. If ECU accept the `KEY` (`KEY` is good/correct), ECU send back the accept code and grants access to protected services.
 
 ![](pics/authen.png)
 
@@ -393,7 +401,7 @@ Only the 5th has the accept packet, so `SEED` is `35779486` and `KEY` is `CA43AB
 
 #### The Speed
 
-Based on the `ford_cgea1_2_bodycan_2011.dbc` we know the CAN-ID for Engine_Data is `1059 (0x423)`. The detail looks like:
+Based on the `ford_cgea1_2_bodycan_2011.dbc` we know the CAN-ID for Engine_Data is `1059 (0x423)`. The detail:
 
 ```
 BO_ 1059 Engine_Data_MS: 8 XXX
@@ -505,8 +513,10 @@ for message in db.messages:
 data_arr = []
 
 with open("423_filter.txt", "r") as file:
-    for line in file:
-        data = line.strip().split("  ")[-1].split(" ")
+    file_data = file.readlines()[1:-2]
+    for line in file_data:
+        data = line.strip().split("  ")[-1].split("\t")[0]
+        data = data.split(" ")
         temp_arr = []
         for i in data:
             temp_arr.append(int(i, 16))
@@ -522,7 +532,7 @@ for i in data_arr:
     if max < decoded["VEH_SPD"]:
         max = decoded["VEH_SPD"]
 
-print("[+] Got max speed: %f" % max)
+print("[+] Got max speed: %.2f" % max)
 ```
 
 Flag: `bi0s{65.13kph_35779486_CA43ABBE}`
