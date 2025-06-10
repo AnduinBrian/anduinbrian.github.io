@@ -1,4 +1,4 @@
----
+9---
 title: bi0sCTF - 2025
 published: 2025-06-09
 description: 'A writeup for hardware tasks in bi0sCTF - 2025.'
@@ -202,7 +202,7 @@ binary:
 0        7        15       23       31       39       47       55
 ```
 
-Write a script to extract those bit. Remember to use those scale and offset, the formula is: 
+Write a script to extract those bit. Remember to use the `(scale, offset)`, the formula is: 
 
 $$
 data = scale \times data + offset
