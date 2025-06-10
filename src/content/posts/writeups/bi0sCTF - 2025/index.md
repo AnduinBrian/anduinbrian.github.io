@@ -163,13 +163,13 @@ BO_ 1144 GPS_Data_Nav_4: 8 XXX
  SG_ VehHead_An_Est : 7|16@0+ (0.01,0) [0|0] "degrees" XXX
 ```
 
-The number followed by `BO_` is the CAN-ID. In the log we have `0x465 (1125)`, it should be our GPS data. We still need to understand what signal will be sent. Lets examine few first line of 0x465 CAN-ID in DBC file.
-+ BO_ 1125 GPS_Data_Nav_1: 8 XXX.
+The number followed by `BO_` is the CAN-ID. In the log we have `0x465 (1125)`, it should be our GPS data. We still need to understand what signal will be sent. Lets examine few first line of `0x465` CAN-ID in DBC file.
++ BO_ 1125 GPS_Data_Nav_1: 8 XXX:
     + `BO_`: Message Syntax.
     + `1125`: CAN-ID (dec).
     + `GPS_Data_Nav_1`: Name.
     + `8`: Length (Bytes).<br>
-+ SG_ GpsHsphLattSth_D_Actl : 25|2@0+ (1,0) [0|0] "" XXX
++ SG_ GpsHsphLattSth_D_Actl : 25|2@0+ (1,0) [0|0] "" XXX:
     + `SG_`: Signal Syntax.
     + `GpsHsphLattSth_D_Actl`: Name.
     + `25|2`: Bit start | Length.
