@@ -8,7 +8,7 @@ category: 'Writeups'
 draft: false 
 ---
 
-> I mainly focus on Hardware challenge, those challenge is interesting.
+> I mainly focus on Hardware challenge, those challenge is ivery nteresting.
 
 ## CAN BUS log challenge
 
@@ -23,7 +23,8 @@ The CAN bus log is here: [Attached](/writeups_file_attached/damnctf_2025/canlog.
 >
 >Example flag: bi0s{1FTFW1R6XBFB08616_Eiffel Tower}
 
-The task is clear: find the VIN and locate the car. The log is large, and its structure is as follows:
+The task is clear: find the VIN and the latest location of the car. The log is large, and its structure is as follows:
+
 ```
 +-----------------+----------+-------------+----------------+
 |  CAN Interface  |  CAN-ID  |  MSG Length |      MSG       |
