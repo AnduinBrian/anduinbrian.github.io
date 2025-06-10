@@ -12,7 +12,7 @@ draft: false
 
 ## CAN BUS log challenge
 
-The CAN bus log is here: [Attached](/writeups_file_attached/damnctf_2025/canlog.txt)
+The CAN bus log is here: [Attached](/writeups_file_attached/damnctf_2025/canlog.txt).
 
 ### lost-in-madras
 
@@ -112,7 +112,8 @@ vcan0  73B   [8]  21 48 4B 37 44 38 32 42    !HK7D82B
 vcan0  73B   [8]  22 47 41 33 34 39 35 34    "GA34954
 ```
 
-Seem like we found the VIN `1FMHK7D82BGA34954`. Look good right !! (You can look for the request contains `F1 90` then pair it the reponse). NGL: first few hours I though this challenge was about some Honda car 💀 because the `JHM` string.
+Seem like we found the VIN `1FMHK7D82BGA34954`. Look good right !! (You can look for the request contains `F1 90` then pair it the reponse).<br>
+*NGL: first few hours I though this challenge was about some Honda car 💀 because the `JHM` string.*
 
 ![](pics/vin_parse.png)
 
@@ -175,7 +176,7 @@ BO_ 1144 GPS_Data_Nav_4: 8 XXX
  SG_ VehHead_An_Est : 7|16@0+ (0.01,0) [0|0] "degrees" XXX
 ```
 
-The number followed by `BO_` is the CAN-ID. In the log we have `0x465 (1125)`, it should be our GPS data. We still need to understand what signal will be sent. Lets examine few first line of `0x465` CAN-ID in DBC file.
+The number followed by `BO_` is the CAN-ID. In the log we have `0x465 (1125)`, it should be our GPS data. We still need to understand what signal will be sent. Lets examine few first line of `0x465` CAN-ID in the DBC file.
 + BO_ 1125 GPS_Data_Nav_1: 8 XXX:
     + `BO_`: Message Syntax.
     + `1125`: CAN-ID (dec).
@@ -191,7 +192,7 @@ The number followed by `BO_` is the CAN-ID. In the log we have `0x465 (1125)`, i
     + `[0|0]`: min | max, can be set to [0|0] - not defined.
     + `XXX`: Receiver node name.
 
-Okay now we need to parse the CAN data for some GPS data. Lets examine the lastest `0x465` data:
+Okay now we need to decode the CAN data for some GPS data. Lets examine the lastest `0x465` data:
 
 ```
 vcan2  465   [8]  66 0D F4 48 1A 0E DD 00	f..H....
