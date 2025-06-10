@@ -232,7 +232,7 @@ vcan2  465   [8]  66 0D F4 48 1A 0E DD 00	f..H....
 CAN-ID 0x465 - Total: 9
 ```
 
-You can see the first value `66` doesn't change, because the car just moving arround Madras therefor the degrees won't be change, right ?? So I think, the first byte would be our `GPS_Latitude_Degrees`. To extract the `GPS_Latitude_Minutes` we simply take the `GPS_Latitude_Degrees` bit offset, add it with `8 - the size of GPS_Latitude_Degrees`, do the same for `GPS_Latitude_Min_dec`. To sum up:
+You can see the first value `66` doesn't change, because the car just moving arround Madras therefor the degrees won't be changed, right ?? So I think, the first byte would be our `GPS_Latitude_Degrees`. To extract the `GPS_Latitude_Minutes` we simply take the `GPS_Latitude_Degrees` bit offset, add it with `8 - the size of GPS_Latitude_Degrees`, do the same for `GPS_Latitude_Min_dec`. To sum up:
 + 0 -> 8: `GPS_Latitude_Degrees`
 + 8 -> 14: `GPS_Latitude_Minutes`
 + 14 -> 28: `GPS_Latitude_Min_dec`
