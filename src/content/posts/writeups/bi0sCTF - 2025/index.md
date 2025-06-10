@@ -436,7 +436,7 @@ Lets extract bit from `7->23` for the vehicle speed. But we have too many line o
 
 We load the DBC file in, and use `cantools` to decode the message. Example script to decode the message:
 
-```
+```python
 import cantools
 
 dbc_string = """
