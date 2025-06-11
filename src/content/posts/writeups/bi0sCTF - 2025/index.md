@@ -488,7 +488,7 @@ vcan1  423   [5]  4F 3E 00 00 00			O>...
 vcan1  423   [5]  5A 3E 00 00 00			Z>...
 ```
 
-You can see the `3E` is consistent why ?? Because high speed CAN bus (500 kbps or 1 Mbps) the common refresh times is usually `10ms - 50m`. Therefor, in short time the speed will slowly increase or decrease like `xx.01 -> xx.05` or `xx.55 -> xx.38`. The `xx` doesn't change.<br>
+You can see the `3E` is consistent, why ?? Because high speed CAN bus (500 kbps or 1 Mbps) the common refresh times is usually `10ms - 50m`. Therefor, in short time the speed will slowly increase or decrease like `xx.01 -> xx.05` or `xx.55 -> xx.38`. The `xx` doesn't change.<br>
 The formula (just to merge `2-bytes` into a `WORD`) to get the speed is:
 
 $$
