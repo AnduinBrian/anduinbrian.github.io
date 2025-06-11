@@ -8,11 +8,11 @@ category: 'Writeups'
 draft: false 
 ---
 
-> I mainly focus on Hardware challenge, those challenge is interesting.
+> I mainly focus on Hardware challenges, those challenge is very nteresting.
 
 ## CAN BUS log challenge
 
-The CAN bus log is here: [Attached](/writeups_file_attached/damnctf_2025/canlog.txt).
+The CAN bus log is here: [attached](/writeups_file_attached/damnctf_2025/canlog.txt).
 
 ### lost-in-madras
 
@@ -23,7 +23,8 @@ The CAN bus log is here: [Attached](/writeups_file_attached/damnctf_2025/canlog.
 >
 >Example flag: bi0s{1FTFW1R6XBFB08616_Eiffel Tower}
 
-The task is clear: find the VIN and locate the car. The log is large, and its structure is as follows:
+The task is clear: find the VIN and the latest location of the car. The log is too large, and it's structure is:
+
 ```
 +-----------------+----------+-------------+----------------+
 |  CAN Interface  |  CAN-ID  |  MSG Length |      MSG       |
@@ -98,7 +99,7 @@ else:
 
 The author said that he used `OBD-2` to dump this log. So I started looking for documentation about PIDs and CAN-IDs. The document stated:
 + CAN-ID `0x7DF`: Broadcast ID, meaning all ECUs will listen and respond if the request is relevant to them.
-+ CAN-ID `0x7E8` to `0x7EF`: response ID for the Engine Control Module (ECM), other modules may respond with `0x7E9` to `0x7EF`.
++ CAN-ID `0x7E8` to `0x7EF`: Response ID for the Engine Control Module (ECM), other modules may respond with `0x7E9` to `0x7EF`.
 
 But in this log, we don't see any CAN-IDs similar. So maybe it used a custom CAN (Oh man !! I hate this). The CAN-IDs `7xx` look quite interesting. As far as I’ve analyzed, I’ve realized the following:
 + CAN-ID `0x733`: The request.
@@ -112,14 +113,14 @@ vcan0  73B   [8]  21 48 4B 37 44 38 32 42    !HK7D82B
 vcan0  73B   [8]  22 47 41 33 34 39 35 34    "GA34954
 ```
 
-Seem like we found the VIN `1FMHK7D82BGA34954`. Look good right !! (You can look for the request contains `F1 90` then pair it the reponse).<br>
+Seem like we found the VIN `1FMHK7D82BGA34954`. Look good right !! (you can look for the request contains `F1 90` then pair it with the response).<br>
 *NGL: first few hours I though this challenge was about some Honda car because the `JHM` string.* 💀
 
 ![](pics/vin_parse.png)
 
 #### Finding the lastest location
 
-We got the info of the car, we need to search for some DBC (CAN database) to translates raw CAN data into meaningful signals (like RPM, temperature,...). So I googled for `Ford 2011 DBC`, it led me to this project.
+We got the info of the car, we need to search for some DBC (CAN database) to translates "raw" CAN data into meaningful signals (like RPM, temperature,...). So I googled for `Ford 2011 DBC`, it led me to this project.
 
 ::github{repo="commaai/opendbc"}
 
@@ -186,23 +187,23 @@ The number followed by `BO_` is the CAN-ID. In the log we have `0x465 (1125)`, i
     + `SG_`: Signal Syntax.
     + `GpsHsphLattSth_D_Actl`: Name.
     + `25|2`: Bit start | Length.
-    + `@0`: byte order, `@0` for big-endian/Motorola, `@1` for little-endian/Intel.
-    + `+`: unsigned, `-` for signed.
+    + `@0`: Byte order, `@0` for big-endian/Motorola, `@1` for little-endian/Intel.
+    + `+`: Unsigned, `-` for signed.
     + `(1,0)`: (scale,offset), the values are used in the physical value linear equation.
-    + `[0|0]`: min | max, can be set to [0|0] - not defined.
+    + `[0|0]`: [min|max], can be set to [0|0] - not defined.
+    + `""`: Unit (such as "KPH", "Degrees",...) - None in this case.
     + `XXX`: Receiver node name.
 
 Okay now we need to decode the CAN data for some GPS data. Lets examine the lastest `0x465` data:
 
 ```
 vcan2  465   [8]  66 0D F4 48 1A 0E DD 00	f..H....
-
 binary:
 01100110 00001101 11110100 01001000 00011010 00001110 11011101 00000000
 0        7        15       23       31       39       47       55
 ```
 
-Write a script to extract those bit. Remember to use those scale and offset, the formula is: 
+Write a script to extract those bit. Remember to use the `(scale, offset)`, the formula is: 
 
 $$
 data = scale \times data + offset
@@ -214,9 +215,9 @@ $$
 Latitude = Degrees + \frac{Minutes + Minutes\_Decimals}{60}
 $$
 
-But its weird, very weird. I can't get the correct lat/long, the result I got when I follow bit offset in the DBC is `(-81.96282, -164.24957)`. So maybe our DBC is wrong or something else ?? (~~*this is the part that hold me*~~).<br>
+But it's weird, very weird. I can't get the correct lat/long, the result I got when I followed the bit offset in DBC file is `(-81.96282, -164.24957)`. So maybe our DBC is wrong or something else ?? (~~*this is the part that hold me*~~).<br>
 After the CTF end, some ppl share about the correct [DBC](https://docs.google.com/spreadsheets/d/1Oumkq83oMC7sUsSIggGv-BK4hmQbXqV5Lp1j2pPncLE/edit?gid=615387281#gid=615387281). So I try again !! This time it gives `(13.07606, -126.85976)`, point to somewhere in the middle of the ocean.<br>
-Hmm thats weird. I start guessing the bit position, we have 9 data:
+Hmm thats weird, but we got the `latitude` almost correct (Madras - `(13.0843° N, 80.2705° E)`). I start guessing the bit position, we have 9 data:
 
 ```
 vcan2  465   [8]  66 16 1A 08 1A 2B AE 00	f....+..
@@ -231,7 +232,7 @@ vcan2  465   [8]  66 0D F4 48 1A 0E DD 00	f..H....
 CAN-ID 0x465 - Total: 9
 ```
 
-You can see the first value `66` doesn't change, because the car just moving arround Madras `(13.0843° N, 80.2705° E)` therefor the degrees won't be change, right ?? So I think, the first byte would be our `GPS_Latitude_Degrees`. To extract the `GPS_Latitude_Minutes` we simply take the `GPS_Latitude_Degrees` bit offset, add it with `8 - the size of GPS_Latitude_Degrees`, do the same for `GPS_Latitude_Min_dec`. To sum up:
+You can see the first value `66` doesn't change, because the car just moving arround Madras therefor the degrees won't be changed, right ?? So I think, the first byte would be our `GPS_Latitude_Degrees`. To extract the `GPS_Latitude_Minutes` we simply take the `GPS_Latitude_Degrees` bit offset, add it with `8 - the size of GPS_Latitude_Degrees`, do the same for `GPS_Latitude_Min_dec`. To sum up:
 + 0 -> 8: `GPS_Latitude_Degrees`
 + 8 -> 14: `GPS_Latitude_Minutes`
 + 14 -> 28: `GPS_Latitude_Min_dec`
@@ -273,6 +274,7 @@ The result:
 ![](pics/map.png)
 
 Script:
+
 ```python
 import binascii
 
@@ -475,7 +477,7 @@ decoded = db.decode_message(1059, data)
 print("Decoded Message:", decoded)
 ```
 
-I tried few data, but the speed is very insane (above 300+ km/h probably ilegal in every country XD). So maybe the we need to modify the DBC. I use the same approach (guessing bit pos) I mentioned above. Here is few data of `0x423`:
+I tried few data, but the speed is very insane (above 300+ km/h probably ilegal in every country XD). So maybe the DBC file is wrong again and we need to modify it. I use the same approach (guessing bit pos) I mentioned above. Here is few data of `0x423`:
 
 ```
 vcan1  423   [5]  22 3E 00 00 00			">...
@@ -498,7 +500,7 @@ $$
 \text{real\_speed} = scale \times \text{real\_speed} + \text{offset}
 $$
 
-Seem like the 2nd-byte is the speed_1, and the 1st-byte is the speed_2. So I modified the DBC, here is the final DBC I used. 
+Seem like the 2nd-byte is the $speed_1$, and the 1st-byte is the $speed_2$. So I modified the DBC, here is the final DBC I used. 
 
 ```
 BO_ 1059 Engine_Data_MS: 5 XXX
@@ -506,7 +508,7 @@ BO_ 1059 Engine_Data_MS: 5 XXX
 ```
 
 The `VEH_SPD` is modifed, start at `0`, size is `16` and using `@1+` for little-endian instead of `@0+`.<br>
-At this point, I think the author messing with us, he was doing something with the bit/byte-order.
+At this point, I think the author is messing with us, he was doing something with the bit/byte-order.
 
 ```python
 import cantools
@@ -557,4 +559,5 @@ print("[+] Got max speed: %.2f" % max)
 
 Flag: `bi0s{65.13kph_35779486_CA43ABBE}`
 
-*To be continued...*
+
+*I Will explain about the Bit-field and we dont need to use the guessing approach. There are two more challengs too. To be continued...*
