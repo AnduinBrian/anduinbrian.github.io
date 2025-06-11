@@ -232,7 +232,7 @@ vcan2  465   [8]  66 0D F4 48 1A 0E DD 00	f..H....
 CAN-ID 0x465 - Total: 9
 ```
 
-You can see the first value `66` doesn't change, because the car just moving arround Madras therefor the degrees won't be changed, right ?? So I think, the first byte would be our `GPS_Latitude_Degrees`. To extract the `GPS_Latitude_Minutes` we simply take the `GPS_Latitude_Degrees` bit offset, add it with `8 - the size of GPS_Latitude_Degrees`, do the same for `GPS_Latitude_Min_dec`. To sum up:
+You can see the first value `66` doesn't change, because the car just moving arround Madras therefore the degrees won't be changed, right ?? So I think, the first byte would be our `GPS_Latitude_Degrees`. To extract the `GPS_Latitude_Minutes` we simply take the `GPS_Latitude_Degrees` bit offset, add it with `8 - the size of GPS_Latitude_Degrees`, do the same for `GPS_Latitude_Min_dec`. To sum up:
 + 0 -> 8: `GPS_Latitude_Degrees`
 + 8 -> 14: `GPS_Latitude_Minutes`
 + 14 -> 28: `GPS_Latitude_Min_dec`
@@ -488,7 +488,7 @@ vcan1  423   [5]  4F 3E 00 00 00			O>...
 vcan1  423   [5]  5A 3E 00 00 00			Z>...
 ```
 
-You can see the `3E` is consistent, why ?? Because high speed CAN bus (500 kbps or 1 Mbps) the common refresh times is usually `10ms - 50ms`. Therefor, in short time the speed will slowly increase or decrease like `xx.01 -> xx.05` or `xx.55 -> xx.38`. The `xx` doesn't change.<br>
+You can see the `3E` is consistent, why ?? Because high speed CAN bus (500 kbps or 1 Mbps) the common refresh times is usually `10ms - 50ms`. Therefore, in short time the speed will slowly increase or decrease like `xx.01 -> xx.05` or `xx.55 -> xx.38`. The `xx` doesn't change.<br>
 The formula (just to merge `2-bytes` into a `WORD`) to get the speed is:
 
 $$
