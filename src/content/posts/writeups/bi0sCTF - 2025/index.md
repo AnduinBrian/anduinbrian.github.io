@@ -137,7 +137,7 @@ We need to know about structure of a DBC File:
 | **VAL\_** | Enumerated values for signals (e.g., 0 = OFF, 1 = ON)                     |
 | **BA\_**  | Attributes (metadata for messages, signals, nodes, etc.)                  |
 
-There are some `BO_` in the `Ford 2011 DBC` about GPS data:
+There are some `BO_` in the `ford_cgea1_2_bodycan_2011.dbc` about GPS data:
 
 ```
 BO_ 1125 GPS_Data_Nav_1: 8 XXX
