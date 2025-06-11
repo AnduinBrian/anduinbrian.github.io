@@ -357,7 +357,7 @@ So in this case, the process should look like this:
 + Step 3: Client calculate the key and send back to the ECU. Data will be `XX 27 16 <KEY>`, 2nd-bytes is `Security level + 1`.
 + Step 4: ECU accept the key, and send back something like `XX 67 16 00 00 00 ...`.
 
-We need to pair the requests and responds, then we find out when the ECU accept the key.
+We need to pair the requests and responses, then we find out when the ECU accepts the key.
 
 ```
 1:
