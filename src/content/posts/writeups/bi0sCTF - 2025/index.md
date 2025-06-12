@@ -128,8 +128,8 @@ We need to know about structure of a DBC File:
 
 | Component | Description                                                               |
 | --------- | ------------------------------------------------------------------------- |
-| **NS\_**  | Namespace for the messages and signals in a DBC file                 |
-| **BS\_**  | Bus Speed (such as 500 kbit)                 |
+| **NS\_**  | **Namespace** for the messages and signals in a DBC file                 |
+| **BS\_**  | **Bus Speed** (such as 500 kbit)                 |
 | **BO\_**  | **Message definition** (CAN ID, name, size, sender)                       |
 | **SG\_**  | **Signal definition** (name, position, length, byte order, scaling, etc.) |
 | **BU\_**  | Node (ECU/module) definitions                                             |
