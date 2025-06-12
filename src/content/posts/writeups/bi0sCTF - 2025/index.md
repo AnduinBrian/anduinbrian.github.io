@@ -8,7 +8,7 @@ category: 'Writeups'
 draft: false 
 ---
 
-> I mainly focus on Hardware challenges, those challenge is very nteresting.
+> I mainly focus on Hardware challenges, those challenge is very interesting.
 
 ## CAN BUS log challenge
 
