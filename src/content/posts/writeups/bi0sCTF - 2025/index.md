@@ -212,7 +212,7 @@ $$
 Then we calculate the `latitude` and `longitude` with this formula:
 
 $$
-Latitude = Degrees + \frac{Minutes + Minutes\_Decimals}{60}
+Latitude/Longitude = Degrees + \frac{Minutes + Minutes\_Decimals}{60}
 $$
 
 But it's weird, very weird. I can't get the correct lat/long, the result I got when I followed the bit offset in DBC file is `(-81.96282, -164.24957)`. So maybe our DBC is wrong or something else ?? (~~*this is the part that hold me*~~).<br>
