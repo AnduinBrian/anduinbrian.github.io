@@ -54,6 +54,10 @@ cp /etc/passwd.sample /var/passwd
 cs password
 ```
 
+Thats why we see the output like `New password:` and `Retype password:`.
+
+![](pics/passwd_log.png)
+
 So we need to reverse the `cs` binary. We can see they echo `KL@UHeZ0` to `/var/tmppwd`, use it to change the password for root and delete it.
 
 ![](pics/change_password.png)
