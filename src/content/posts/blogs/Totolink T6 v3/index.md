@@ -23,7 +23,15 @@ We have `SquashFS` at `0x247486`, let's extract it first. First we wanna read `e
 
 ![](pics/binwalk.png)
 
-In the `rcS` file, we can see the device will copy the `/etc/shadow.sample` to `/var/shadow`. Therefore, the `shadow.sample` will contain login credentials. Lets look inside that file.
+In the `rcS` file, we can see the device will copy the `/etc/shadow.sample` to `/var/shadow`. Therefore, the `shadow.sample` will contain login credentials.
+
+```
+cp /etc/shadow.sample /var/shadow
+cp /etc/passwd.sample /var/passwd
+#cp /etc/vsftpd.conf /var/config/vsftpd.conf
+```
+
+Lets look inside that file.
 
 ```
 root:$1$BJXeRIOB$w1dFteNXpGDcSSWBMGsl2/:16090:0:99999:7:::
