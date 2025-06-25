@@ -19,7 +19,10 @@ You can download the newest firmware by this [link](https://www.totolink.net/hom
 ![](pics/t48.jpg)
 
 ## Finding login credentials
-We have `SquashFS` at `0x247486`, let's extract it first. First we wanna read `etc/shadow` for login credentials. There are `shadow` and `shadow.sample` file. The `shadow` file is link to `/var/show`, we dont have this file. Lets read init script in `init.d` folder.<br>
+We have `SquashFS` at `0x247486`, let's extract it first. First we wanna read `etc/shadow` for login credentials. There are `shadow` and `shadow.sample` file. The `shadow` file is link to `/var/show`, we dont have this file. Lets read init script in `init.d` folder.
+
+![](pics/binwalk.png)
+
 In the `rcS` file, we can see the device will copy the `/etc/shadow.sample` to `/var/shadow`. Therefore, the `shadow.sample` will contain login credentials. Lets look inside that file.
 
 ```
