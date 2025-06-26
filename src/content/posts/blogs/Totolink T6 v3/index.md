@@ -14,7 +14,7 @@ I do Vuln research in my free time. Today, my target is TOTOLINK T6 V3.0, The fi
 ![](pics/uart.png)
 
 ## Dumping the Firmware
-You can download the newest firmware by this [link](https://www.totolink.net/home/menu/detail/menu_listtpl/download/id/190/ids/36.html). The device use `XM25QH64C` SOP-8, I desolder it anduse `XGecu T48` to dump the firmware, then use `binwalk` on it.<br>
+You can download the newest firmware by this [link](https://www.totolink.net/home/menu/detail/menu_listtpl/download/id/190/ids/36.html). The device use `XM25QH64C` SOP-8, I desolder it and use `XGecu T48` to dump the firmware, then use `binwalk` on it.<br>
 
 ![](pics/t48.jpg)
 
