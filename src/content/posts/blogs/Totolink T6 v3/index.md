@@ -153,7 +153,7 @@ udp        0      0 0.0.0.0:9034            0.0.0.0:*                           
 
 In the `main` function, I can see it try to `recvfrom` socket, compare with some string like `orf`, `irf`,... Then use `strcat` to complete the command and pass it to `command`. We can inject our command easily. 
 
-![](pics/updserver_func.pngpng)
+![](pics/updserver_func.png)
 
 So I write a script for it:
 
