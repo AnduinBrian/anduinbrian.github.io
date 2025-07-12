@@ -153,13 +153,12 @@ udp        0      0 0.0.0.0:67              0.0.0.0:*                           
 udp        0      0 0.0.0.0:9034            0.0.0.0:*                           972/UDPserver
 ```
 
-In the `main` function, I can see it try to `recvfrom` socket, compare with some string like `orf`, `irf`,... Then use `strcat` to complete the command and pass it to `command`. We can inject our command easily. 
+In the `main` function, I can see it try to `recvfrom` socket, compare with some string like `orf`, `irf`,... Then use `strcat` to complete the command and pass it to `command`. We can inject our command easily. Here is the POC:
 
-![](pics/updserver_func.png)
-
-Here is the result:
-
-![](pics/udpserer_shell.png)
+<video width="640" height="360" controls>
+  <source src="/blogs_file_attached\totolink_t6/poc_UDPserver.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ### BOF -> DDOS or ...
 We back to `cstecgi.cgi`, in the function at address `0x41f404` (this is the handler for `setLanguageCfg`). First the program parse 2 argv from `POST` request, then it check file `/var/userdata/product.ini` is exist, then the program will create a string from hardcoded string `helpUrl_` and our argv. 
@@ -190,10 +189,9 @@ But now, the hardest part join in. We dont know anything about the address of th
 
 ![](pics/vmmap.png)
 
-The POC took 30min to run, but we able to get shell through telnet:
+The POC took arround 30 mins to successful exploit and we able to get shell through telnet. The result after we found the telnet port (23):
 
-![](pics/run_time.png)
-
-The result after we found the telnet port (23):
-
-![](pics/poc.png)
+<video width="640" height="360" controls>
+  <source src="/blogs_file_attached\totolink_t6/poc_bof_brute.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
