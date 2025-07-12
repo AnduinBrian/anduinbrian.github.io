@@ -10,7 +10,7 @@ category: 'Blogs'
 draft: false
 ---
 
-> Updated: I removed POC !!
+> Updated: I removed POC !! I post videos to prove it. (sorry for the watermark)
 
 I do Vuln research in my free time. Today, my target is TOTOLINK T6 V3.0, The firmware version is `V4.1.5cu.748_B20211015`. After open the plastic shell, I see 4 pin with `GND`, `TX`, `RX`, `VCC`. It should be UART, with the correct baud rate (`38400`). After line and line of log, they ask me for credential to login.
 
