@@ -189,7 +189,7 @@ But now, the hardest part join in. We dont know anything about the address of th
 
 ![](pics/vmmap.png)
 
-The POC took arround 30 mins to successful exploit and we able to get shell through telnet. The result after we found the telnet port (23):
+The POC took arround `5 - 30` mins to successful exploit and we able to get shell through telnet. The result after we found the telnet port (23):
 
 <video width="640" height="360" controls>
   <source src="/blogs_file_attached\totolink_t6/poc_bof_brute.mp4" type="video/mp4">
