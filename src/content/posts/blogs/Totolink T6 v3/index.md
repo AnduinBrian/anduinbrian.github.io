@@ -158,11 +158,11 @@ So I looked at those library and found out there is a string `telnetd` in `/lib/
 - Control the `a0` (`a0 = s1`).
 - Call the `system` function.
 
-You might ask, how we control it when we dont even touch the `s1` reg ? The answer is: cleanup part of the function will do that. You can see those reg `s0`, `s1,`, `s2` will be loaded with the value on the stack.
+You might ask, how we control it when we dont even touch the `s1` reg ? The answer is: cleanup part of the function will do that. You can see those reg `s0`, `s1`, `s2` will be loaded with the value on the stack.
 
 ![](pics/cleanup.png)
 
-But now, the hardest part join in. We dont know anything about the address of those library, how the heck we can know the address of `telnetd` string ? You can see the `library_base` start at `0x77xxx000`, we can brute that `xxx` (12 bits). Then we calculate the offset from `libdl-0.9.33.so` to `libmystdlib.so`, its 0x11c000.
+But now, the hardest part join in. We dont know anything about the address of those library, how the heck we can know the address of `telnetd` string ? You can see the `library_base` start at `0x77xxx000`, we can brute that `xxx` (12 bits). Then we calculate the offset from `libdl-0.9.33.so` to `libmystdlib.so`, its `0x11c000`.
 
 ![](pics/vmmap.png)
 
