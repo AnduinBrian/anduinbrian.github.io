@@ -19,6 +19,6 @@ I have orange/yellow/green/blue-belt on [pwn.college](https://pwn.college/hacker
 
 ### My contacts:
 - Email: reisen1943.ctf@gmail.com
-- My resume: <a href="/my_cv.pdf">download<img src="/favicon/download.png" width="16" style="vertical-align:middle; display:inline; margin:0;"></a>
+- My resume: <a href="/CV_NguyenQuangHuy.pdf">download<img src="/favicon/download.png" width="16" style="vertical-align:middle; display:inline; margin:0;"></a>
 
 ::github{repo="AnduinBrian/anduinbrian.github.io"}
