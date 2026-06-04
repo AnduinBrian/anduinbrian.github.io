@@ -1,6 +1,6 @@
 ---
 title: Address Translation
-published: 2026-06-02
+published: 2026-06-04
 description: 'From virtual to physical: A deep dive into how RAM actually works.'
 image: 'pics/cover.png'
 tags: ['Blogs', 'Hardware']
