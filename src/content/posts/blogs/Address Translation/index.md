@@ -234,7 +234,7 @@ Okay, we got the value `0x0000000002e41067`, lets break it down:
 
 </div>
 
-Lets me explain the member in it:
+Let me explain the members/fields:
 - `NX (No Execute)` - If this is `1`, code can't be executed on this page.
 - `PDPT Physical Address` - This is the physical address of the PDPT Table (PDPT base). Remember, this is `PFN (Page Frame Number)`, it just like an index. The first 4 KB chunk of RAM is `PFN 0`, next is `PFN 1`, so on. To get the actual PDPT Physical Address, you must multiply this PFN by 4096 (0x1000).
 - `Accessed` - The CPU's Memory Management Unit (MMU) has recently used this specific entry for an address translation.
@@ -244,7 +244,7 @@ Lets me explain the member in it:
 - `Read/Write` - This memory only is writable if this bit is set to `1`.
 - `Present` - If this bit is `1`, the page is loaded in physical RAM and the CPU will process the rest of the flags. If it is `0`, the processor will not use this entry for address translation and triggers a Page Fault.
 
-Okay we cant extract to get the `PDPT Physical Address` by using the command `p/x 0x0000000002e41067 & ~((1ull<<12)-1) & ((1ull<<51)-1)`.
+Okay we can extract to get the `PDPT Physical Address` by using the command `p/x 0x0000000002e41067 & ~((1ull<<12)-1) & ((1ull<<51)-1)`.
 
 ```bash
 pwndbg> p/x 0x0000000002e41067 & ~((1ull<<12)-1) & ((1ull<<51)-1)
@@ -412,7 +412,7 @@ if __name__ == "__main__":
         address = int(sys.argv[1], 16)
         pml4, pdpt, pd, pt = analyze_addr(address)
         print("[+] Address: 0x%x" % address)
-        print("[+] Address analze: ")
+        print("[+] Address analyze: ")
         print("  [-] Level 1 - PT:  0x%x" % pt)
         print("  [-] Level 2 - PD:  0x%x" % pd)
         print("  [-] Level 3 - PDPT: 0x%x" % pdpt)
