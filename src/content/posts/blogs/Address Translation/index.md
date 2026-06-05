@@ -197,9 +197,9 @@ if __name__ == "__main__":
 ## Go for a walk, shall we ?
 ### First step (decode PML4 info)
 
-`CR3 = 0x2e3c000`, but this value isn't just an address. The lower 12 bits of `CR3` hold control flags like `Page-level Cache Disable` (PCD) and `Page-level Write-Through` (PWT). Because we only need to extract the base address (bits 12 -> 63), we use the GDB command `p/x $cr3 & 0xFFFFFFFFFFFFF000`. This successfully gives us the physical pointer to the `PML4 base`.
+`CR3 = 0x2e3c000`, but this value isn't just an address. The lower 12 bits of `CR3` hold control flags like `Page-level Cache Disable` (PCD) and `Page-level Write-Through` (PWT). Because we only need to extract the base address (bits `63:12`), we use the GDB command `p/x $cr3 & 0xFFFFFFFFFFFFF000`. This successfully gives us the physical pointer to the `PML4 base`.
 
-Since our `PML4 Index = 511`, our next step is to find out what is in the 511th entry of the PML4 Table (at offset `511 * 8`). 
+Since our `PML4 Index = 511`, our next step is to find out what is in the `511th` entry of the PML4 Table (at offset `511 * 8`). 
 
 However when we use GDB's `x` command, GDB assumes the address provided is a *Virtual Address*. The MMU will attempt to translate that address, but the value we pulled from `CR3` is already a *Physical Address*. Because GDB tries to translate an address that shouldn't be translated, the lookup fails, and it cannot access that memory.
 
@@ -357,6 +357,7 @@ pwndbg> monitor xp/10gx 0x1227EE3
 0000000001227f03:                           0x8d485074c98548ca      0x046348c66348ff71
 0000000001227f13:                           0x79c08582a1654085      0x52050348d0f7480a
 0000000001227f23:                           0x634801568d018aa3      0xa1654095146348d2
+
 pwndbg> x/10gx 0xffffffff81227ee3
 0xffffffff81227ee3 <get_symbol_pos+67>:     0xa38b150348d2f748      0x420f48d73948018a
 0xffffffff81227ef3 <get_symbol_pos+83>:     0xf08948c8430f48f0      0x7701f88348c82948
