@@ -203,7 +203,7 @@ Since our `PML4 Index = 511`, our next step is to find out what is in the `511th
 
 However when we use GDB's `x` command, GDB assumes the address provided is a *Virtual Address*. The MMU will attempt to translate that address, but the value we pulled from `CR3` is already a *Physical Address*. Because GDB tries to translate an address that shouldn't be translated, the lookup fails, and it cannot access that memory.
 
-So, we have 2 ways to read the value in the `CR3`:
+So, we have 2 ways to read the value:
 - Use the `monitor xp/10gx (0x2e3c000 + 511 * 8)` command - `xp` stands for *Examine Physical*; `10gx` shows 10 values in 64-bits hexadecimal format.
 - Use the `x/10gx 0xffff888000000000 + (0x2e3c000 + 511 * 8)` command - We add `PAGE_OFFSET = 0xffff888000000000` because, on modern x86-64 systems, `PAGE_OFFSET` is often [0xffff888000000000](https://elixir.bootlin.com/linux/v6.14.5/source/arch/x86/include/asm/page_64_types.h#L42).
 
