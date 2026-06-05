@@ -265,7 +265,7 @@ pwndbg> monitor xp/10gx (0x2e41000 + 510 * 8)
 pwndbg>
 ```
 
-Everything looks the same, but there is a new challenger: `Page Size`. If this bit is set to `1`, we call it `Huge Page` and we need to decode the PDPT info in a different way. We will get back to it later. The structure of the `Huge Page` should look like this:
+Everything looks the same, but there is a new challenger: `Page Size`. If this bit is set to `1`, we call it `Huge Page` and we need to decode the PDPT info in a different way. The structure of the `Huge Page` should look like this:
 
 <div align="center">
 
