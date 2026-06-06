@@ -1,6 +1,7 @@
 ---
 title: Address Translation
 published: 2026-06-04
+updated: 2026-06-06
 description: 'From virtual to physical: A deep dive into how RAM actually works.'
 image: 'pics/cover.png'
 tags: ['Blogs', 'Hardware']
@@ -92,6 +93,16 @@ And there you go mate !!
 *Our kernel just run !!*
 
 </div>
+
+To connect and debug the kernel. We simple run `QEMU` with 2 more options:
+- `-s` - This will open GDB port `1234`.
+- `-S` - This will freeze the `QEMU` and wait for a debugger attach.
+
+Then we open another Terminal, open GDB and use this command:
+
+```bash
+pwndbg> target remote :1234
+```
 
 # What is Address Translation
 
@@ -476,10 +487,10 @@ if __name__ == "__main__":
         print("\n***************** PAGE WALKING *****************")
 ```
 **NOTE**: I use `Intel x86-64` terms in this post, for `Linux` it will be:
-- `PML4` = `PGD`.
-- `PDPT` = `PUD`.
-- `PD` = `PMD`.
-- `PT` = `PTE`.
+- `PML4` = `PGD` or `Page Global Directory`.
+- `PDPT` = `PUD` or `Page Upper Directory`.
+- `PD` = `PMD` or `Page Middle Directory`.
+- `PT` = `PTE` or `Page Table Entry`.
 
 # Ending
 
