@@ -98,9 +98,10 @@ To connect and debug the kernel. We simple run `QEMU` with 2 more options:
 - `-s` - This will open GDB port `1234`.
 - `-S` - This will freeze the `QEMU` and wait for a debugger attach.
 
-Then we open another Terminal, open GDB and use this command:
+Then we open another Terminal, open GDB and open the vmlinux file (this is the statically linked and uncompressed Linux kernel executable file, we will have this file after we built our kernel):
 
 ```bash
+pwndbg> file vmlinux
 pwndbg> target remote :1234
 ```
 
