@@ -317,7 +317,7 @@ In this case, we don't have to deal with the `Huge Page` so just like normal.
 
 </div>
 
-Get the `PD base` out using this command ``
+Get the `PD base` out using this command `p/x 0x0000000002e42063 & ~((1ull<<12)-1) & ((1ull<<51)-1)`
 
 ```bash
 pwndbg> p/x 0x0000000002e42063 & ~((1ull<<12)-1) & ((1ull<<51)-1)
