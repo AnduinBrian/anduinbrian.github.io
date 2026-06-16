@@ -96,7 +96,7 @@ And there you go mate !!
 
 To connect and debug the kernel. We simple run `QEMU` with 2 more options:
 - `-s` - This will open GDB port `1234`.
-- `-S` - This will freeze the `QEMU` and wait for a debugger attach.
+- `-S` - This will freeze the `QEMU` and wait for a debugger to attach.
 
 Then we open another Terminal, open GDB and open the `vmlinux` file (this is the statically linked and uncompressed Linux kernel executable file, we will have this file after we built our kernel):
 
@@ -296,13 +296,13 @@ I will explain some new fields:
 To get the *Physical Address* we need to extract the bits from `51:30` and multi it with `0x40000000 (1 GB)` not `4096 (4 KB)` like normal page. You might ask, why a `1 GB` page? Let me explain. *Virtual Address* is:
 
 $$
-	{Unused}_{16\text{-bits}} + \text{PML4}_{9\text{-bits}} + \text{PDPT}_{9\text{-bits}} + \text{PD}_{9\text{-bits}} + \text{PT}_{9\text{-bits}} + \text{Offset}_{12\text{-bits}} = 64\ \text{bits}
+	{Unused}_{\text{ 16-bits}} + \text{PML4}_{\text{ 9-bits}} + \text{PDPT}_{\text{ 9-bits}} + \text{PD}_{\text{ 9-bits}} + \text{PT}_{\text{ 9-bits}} + \text{Offset}_{\text{ 12-bits}} = 64\ \text{bits}
 $$
 
 If we found a `Huge Page`, we will stop the translation right there, and the *Virtual Address* looks like this:
 
 $$
-    {Unused}_{16-bits} + \text{PML4}_{9-bits} + \text{PDPT}_{9-bits} + \text{skipped}_{30-bits}
+    {Unused}_{\text{ 16-bits}} + \text{PML4}_{\text{ 9-bits}} + \text{PDPT}_{\text{ 9-bits}} + \text{skipped}_{\text{ 30-bits}}
 $$
 
 30-bits is skipped. so the page size: $2^{30} = 1{,}073{,}741{,}824\ \text{Bytes} = 1\ \text{GB}$
