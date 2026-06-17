@@ -2,7 +2,7 @@
 title: Address Translation
 published: 2026-06-04
 updated: 2026-06-06
-description: 'From virtual to physical: A deep dive into how RAM actually works.'
+description: 'From virtual to physical: A deep dive into how MMU works.'
 image: 'pics/cover.png'
 tags: ['Blogs', 'Hardware']
 category: 'Blogs'
