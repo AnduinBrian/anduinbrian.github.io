@@ -16,7 +16,7 @@ I do vuln research in my free time. Mainly focus on IoT devices, hardware, autom
 In CTFs, I'm mostly into rev and pwn — love digging into binaries 😄.<br><br>
 I'm a part of the "CTF Academy" team, mentored by [Shellphish](https://shellphish.net/).<br><br>
 I have orange/yellow/green/blue-belt on [pwn.college](https://pwn.college/hacker/7164) and have completed 2+ Flare-On challenges.<br><br>
-And yes, I practice Satsui no Hado everyday.
+And yes, I practice Shun Goku Satsu everyday.
 
 <img src="/satsu.png" width=320px class="center">
 

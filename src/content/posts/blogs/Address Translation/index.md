@@ -495,7 +495,7 @@ if __name__ == "__main__":
 
 # Ending
 
-Honestly, understanding address translation doesn't help much in app exploitation. But knowing exactly what the machine is doing underneath, step by step, from a virtual address all the way down to physical RAM — it gives me joy and reminds me to never stop learning and practicing Satsui no Hado :) .
+Honestly, understanding address translation doesn't help much in app exploitation. But knowing exactly what the machine is doing underneath, step by step, from a virtual address all the way down to physical RAM — it gives me joy and reminds me to never stop learning and practicing Shun Goku Satsu :) .
 
 <div align="center">
 
