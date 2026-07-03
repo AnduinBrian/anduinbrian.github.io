@@ -11,7 +11,7 @@ draft: false
 
 > A long time ago, I spent a lot of time studying CPU exploitation. During that process, I really loved how virtual addresses are mapped to physical addresses. It's complex but it's fun, so today I'm going to share what I learned and break down the translation process step-by-step.
 
-# But first, let's build a Linux kernel from scratch...
+# But first, let's build a Linux kernel from source...
 
 So yeah, we need a Linux kernel image to emulate and debug. I went with version `6.9.3`, but you do you. First, install tools required:
 
