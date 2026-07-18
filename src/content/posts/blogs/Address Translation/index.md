@@ -251,7 +251,7 @@ Let me explain the members/fields:
 - `PDPT Physical Address` - This is the physical address of the PDPT Table (PDPT base). Remember, this is `PFN (Page Frame Number)`, it just like an index. The first 4 KB chunk of RAM is `PFN 0`, next is `PFN 1`, so on. To get the actual PDPT Physical Address, you must multiply this PFN by 4096 (0x1000).
 - `Accessed` - The CPU's Memory Management Unit (MMU) has recently used this specific entry for an address translation.
 - `Page Cache Disabled (PCD)` - The CPU is allowed to cache this memory in its L1/L2/L3 caches if this bit is set to `0`.
-- `Page Write Through (PWT)` - Write-back caching is enabled. If this is `1`, CPU will writes to this memory every single time, updates the cache and immediately push the data into physical RAM through memory bus.
+- `Page Write Through (PWT)` - Write-through caching is enabled. If this is `1`, CPU will writes to this memory every single time, updates the cache and immediately push the data into physical RAM through memory bus.
 - `User/Supervisor` - User-mode app are allowed to access this memory space. If it were `0`.
 - `Read/Write` - This memory only is writable if this bit is set to `1`.
 - `Present` - If this bit is `1`, the page is loaded in physical RAM and the CPU will process the rest of the flags. If it is `0`, the processor will not use this entry for address translation and triggers a Page Fault.
@@ -289,7 +289,7 @@ Everything looks the same, but there is a new challenger: `Page Size`. If this b
 
 I will explain some new fields:
 - `Memory Protection Key` or `Protection Keys for Userspace` - allow userspace app to group their memory pages and change the access permission (Read/Write/Disable) for the grouped-memories, without OS's help.
-- `Page Attribute Table (PAT)` - This helps the MMU determine the specific caching type for the memory page, such as `WB (Write-Back)`, `UC (Uncacheable)`, `WC (Write-Combining)`, or `WT (Write-Through)`.
+- `Page Attribute Table (PAT)` - helps the MMU determine the specific caching type for the memory page (combined with the `PCD` and `PWT` bits to index the `PAT MSR`), such as `WB (Write-Back)`, `UC (Uncacheable)`, `WC (Write-Combining)`, or `WT (Write-Through)`.
 - `Global` - The MMU's cache for the translation is called the TLB (Translation Lookaside Buffer). If this bit is set to `1`, the CPU won't flush this translation from it when the `CR3` register changes.
 - `Dirty` - If this flag is `1`, the memory has been modified since it was first loaded into physical RAM.
 
@@ -407,85 +407,75 @@ def analyze_addr(addr):
     return pml4, pdpt, pd, pt
 
 def is_huge_page(value):
-    return value & (1<<7)
+    return bool(value & (1 << 7))
 
-def decode_data(value, offset_1, offset_2):
-    return value & ~((1<<offset_1)-1) & ((1<<offset_2) - 1)
+def decode_data(value, low_bit, high_bit):
+    return value & ~((1 << low_bit) - 1) & ((1 << (high_bit + 1)) - 1)
 
-def print_end(virtual_addr, value, offset):
-    print("\n[+] Virtual Address: 0x%x - is located in physical memory 0x%x" % (virtual_addr, value + offset))
+def print_end(virtual_addr, phys_base, offset, kernel_direct):
+    phys = phys_base + offset
+    print("\n[+] Virtual Address:  0x%x" % virtual_addr)
+    print("    -> Physical Address: 0x%x" % phys)
+    print("    -> Read in GDB (direct-map): 0x%x" % (kernel_direct + phys))
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("[!] Give me address bro !!")
         exit(0)
-    else:
-        print("\n***************** PAGE WALKING *****************")
-        address = int(sys.argv[1], 16)
-        pml4, pdpt, pd, pt = analyze_addr(address)
-        print("[+] Address: 0x%x" % address)
-        print("[+] Address analyze: ")
-        print("  [-] Level 1 - PT:  0x%x" % pt)
-        print("  [-] Level 2 - PD:  0x%x" % pd)
-        print("  [-] Level 3 - PDPT: 0x%x" % pdpt)
-        print("  [-] Level 4 - PML4: 0x%x" % pml4)
 
-        print("\n[+] Start walking...")
-        # PML4 -> PDPT
-        cr3_reg = int(input("[+] PML4 (CR3 register): "), 16)
-        print("[+] From PML4 -> get Physical PDPT")
-        kernel_direct = (0xffff << 48) | (0x88 << 40) | (0x8 << 36)
-        print("[+] Kernel Direct Mapping: 0x%x" % kernel_direct)
-        pml4_entry = pml4 * 8
-        pml4_data_addr = pml4_entry + cr3_reg
-        data_at_pml4 = int(input("  [-] Data at PML4 (GDB command: x/gx 0x%x): " % (pml4_data_addr | kernel_direct)), 16)
-        physical_pdpt = decode_data(data_at_pml4, 12, 51)
-        print("  [-] Physical PDPT: 0x%x\n" % physical_pdpt)
+    print("\n***************** PAGE WALKING *****************")
+    address = int(sys.argv[1], 16)
+    pml4, pdpt, pd, pt = analyze_addr(address)
+    print("[+] Address: 0x%x" % address)
+    print("[+] Address analyze: ")
+    print("  [-] Level 1 - PT:   0x%x" % pt)
+    print("  [-] Level 2 - PD:   0x%x" % pd)
+    print("  [-] Level 3 - PDPT: 0x%x" % pdpt)
+    print("  [-] Level 4 - PML4: 0x%x" % pml4)
 
-        # PDPT -> PD
-        print("[+] From PDPT -> get Physical PD")
-        pdpt_entry = pdpt * 8
-        pdpt_data_addr = physical_pdpt + pdpt_entry
-        data_at_pdpt = int(input("  [-] Data at PDPT (GDB command: x/gx 0x%x): " % (kernel_direct + pdpt_data_addr)), 16)
-        if is_huge_page(data_at_pdpt):
-            physical_pd = decode_data(data_at_pdpt, 30, 51)
-            print("  [-] Physical PD: 0x%x" % physical_pd)
-            print("[+] Encounter huge PDPT page")
-            print("[+] STOP walking !!")
-            offset = address & ((1 << 30) - 1)
-            print_end(address, kernel_direct + physical_pd, offset)
-            exit(0)
-        else:
-            physical_pd = decode_data(data_at_pdpt, 12, 51)
-            print("  [-] Physical PD: 0x%x\n" % physical_pd)
+    print("\n[+] Start walking...")
+    kernel_direct = (0xffff << 48) | (0x88 << 40) | (0x8 << 36)
+    print("[+] Kernel Direct Mapping: 0x%x" % kernel_direct)
 
-        # PD -> PT
-        print("[+] From PD -> get Physical PT")
-        pd_entry = pd * 8
-        pd_data_addr = physical_pd + pd_entry
-        data_at_pd = int(input("  [-] Data at PD (GDB command: x/gx 0x%x): " % (kernel_direct + pd_data_addr)), 16)
-        if is_huge_page(data_at_pd) == 0x80:
-            physical_page = decode_data(data_at_pd, 21, 51)
-            print("  [-] Physical page: 0x%x" % physical_page)
-            print("  [-] Encounter huge PD page")
-            print("  [-] STOP walking !!")
-            offset = address & ((1 << 21) - 1)
-            print_end(address, kernel_direct + physical_page, offset)
-            exit(0)
-        else:
-            physical_pt = decode_data(data_at_pd, 12, 51)
-            print("  [-] Physical PT: 0x%x\n" % physical_pt)
+    # PML4 -> PDPT
+    cr3_reg = int(input("[+] PML4 base (CR3 register): "), 16) & ~0xfff
+    pml4_data_addr = cr3_reg + pml4 * 8
+    data_at_pml4 = int(input("  [-] Data at PML4 (x/gx 0x%x): " % (pml4_data_addr | kernel_direct)), 16)
+    physical_pdpt = decode_data(data_at_pml4, 12, 51)
+    print("  [-] Physical PDPT: 0x%x\n" % physical_pdpt)
 
-        # PT -> physical page
-        print("[+] From PT -> get Physical page")
-        physical_page_addr = physical_pt + pt * 8
-        data_at_physical = int(input("  [-] Data at PT (GDB command: x/gx 0x%x): " % (kernel_direct + physical_page_addr)), 16)
-        physical_page = decode_data(data_at_physical, 12, 51)
-        print("  [-] Physical page: 0x%x" % physical_page)
-        offset = address & ((1 << 12) - 1)
-        print_end(address, kernel_direct + physical_page, offset)
+    # PDPT -> PD (may be a 1GB huge page)
+    pdpt_data_addr = physical_pdpt + pdpt * 8
+    data_at_pdpt = int(input("  [-] Data at PDPT (x/gx 0x%x): " % (kernel_direct + pdpt_data_addr)), 16)
+    if is_huge_page(data_at_pdpt):
+        phys_base = decode_data(data_at_pdpt, 30, 51)
+        offset = address & ((1 << 30) - 1)
+        print("[+] Encounter 1GB huge PDPT page -> STOP walking !!")
+        print_end(address, phys_base, offset, kernel_direct)
+        exit(0)
+    physical_pd = decode_data(data_at_pdpt, 12, 51)
+    print("  [-] Physical PD: 0x%x\n" % physical_pd)
 
-        print("\n***************** PAGE WALKING *****************")
+    # PD -> PT (may be a 2MB huge page)
+    pd_data_addr = physical_pd + pd * 8
+    data_at_pd = int(input("  [-] Data at PD (x/gx 0x%x): " % (kernel_direct + pd_data_addr)), 16)
+    if is_huge_page(data_at_pd):
+        phys_base = decode_data(data_at_pd, 21, 51)
+        offset = address & ((1 << 21) - 1)
+        print("[+] Encounter 2MB huge PD page -> STOP walking !!")
+        print_end(address, phys_base, offset, kernel_direct)
+        exit(0)
+    physical_pt = decode_data(data_at_pd, 12, 51)
+    print("  [-] Physical PT: 0x%x\n" % physical_pt)
+
+    # PT -> physical page (4KB)
+    pt_data_addr = physical_pt + pt * 8
+    data_at_pt = int(input("  [-] Data at PT (x/gx 0x%x): " % (kernel_direct + pt_data_addr)), 16)
+    phys_base = decode_data(data_at_pt, 12, 51)
+    offset = address & ((1 << 12) - 1)
+    print_end(address, phys_base, offset, kernel_direct)
+
+    print("\n***************** PAGE WALKING *****************")
 ```
 **NOTE**: I use `Intel x86-64` terms in this post, for `Linux` it will be:
 - `PML4` = `PGD` or `Page Global Directory`.
