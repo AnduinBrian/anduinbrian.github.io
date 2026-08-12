@@ -2147,3 +2147,21 @@ FLAG=STARPWN{Syn7h_v1be$_fr0m_0rb1t}
 ```
 
 Flag: `STARPWN{Syn7h_v1be$_fr0m_0rb1t}`
+
+# SWEET ENDING
+<div align="center">
+
+![](pics/outer_wilds.png)
+
+***A conscious observer enters The Eye***
+
+***And as their mind become the Universe***
+
+***We are here for no other reasons beyond friendship***
+
+***Grateful for a chance to meet before the end***
+
+***Maybe... we want to do it all over again***
+</div>
+
+
