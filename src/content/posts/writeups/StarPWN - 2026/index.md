@@ -719,7 +719,11 @@ print('STARPWN{' + flag + '}')
 
 Flag: `STARPWN{2911565936}`.
 
+<br>
+<br>
+
 # COMMUNICATIONS & RF
+
 ## Connect the dots
 
 > While known for their big eye in the sky, Prismantir huge drone fleet is also a behemoth to keep in control. Every night, each drone patrols its assigned block, following its route with clockwork precision. But tonight, one unit broke the formation. Can you trace where did it go?
@@ -1199,7 +1203,11 @@ $$
 
 => Jammer at `36.086801 -115.263314`. Flag: `starpwn{Echo_Trail_Park}`
 
+<br>
+<br>
+
 # SPACE COMMUNICATIONS & RF
+
 ## Silent Beacon
 
 >A new brief from Titan Corp, but keep this one on the down low. One of their classified CubeSats went silent after a suspected cyber intrusion. The last telemetry burst was captured at the ground station, but the file is raw, CCSDS packets buried in line noise, with multiple APIDs interleaved.
@@ -2147,6 +2155,9 @@ FLAG=STARPWN{Syn7h_v1be$_fr0m_0rb1t}
 ```
 
 Flag: `STARPWN{Syn7h_v1be$_fr0m_0rb1t}`
+
+<br>
+<br>
 
 # SWEET ENDING
 <div align="center">
