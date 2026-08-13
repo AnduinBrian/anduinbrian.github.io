@@ -1584,7 +1584,7 @@ version = "1.0.2"
 packages = ["cubesat_upstream_driver"]
 ```
 
-Then we build, and upload the `.whl` on the server, after that we send a command like `PING`, `STATUS`,... to trigger the `handle_command`. And luckyly, I got flag in ENV:
+Then we build, and upload the `.whl` on the server, after that we send a command like `PING`, `STATUS`,... to trigger the `handle_command`. And luckily, I got flag in ENV:
 
 ```
 11:28:48 PM TM|EVENT|COMMAND_ACK|ENV FLIGHT_SIM_HOST=127.0.0.1 || ... ENV LANG=C.UTF-8 || ENV PUBLIC_INDEX_HOST=127.0.0.1 || ENV GPG_KEY=A035C8C19219BA821ECEA86B64E628F8D684696D || ENV PYPI_INTERNAL_ROOT=/var/lib/challenge/pypi_internal || ENV FLAG=STARPWN{7h20u9h_v1c702y_my_ch41n5_423_820k3n} || ENV CI_BUILDER_URL=http://127.0.0.1:8080/run-build || ENV INTERNAL_INDEX_HOST=127.0.0.1 || ...
