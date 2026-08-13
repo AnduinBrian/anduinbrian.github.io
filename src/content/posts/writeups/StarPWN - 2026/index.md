@@ -732,6 +732,13 @@ Flag: `STARPWN{2911565936}`.
 >
 >For example: ASAP -> starpwn{As_Soon_As_Possible}
 
+### Reading the challenge
+
+```
+$file PRISM_S03_B10-30_20260830.raw
+PRISM_S03_B10-30_20260830.raw: data
+```
+
 ### Solving the challenge
 The file extension is `.raw`, so I open it in `010 Editor`. First 3 lines is:
 
