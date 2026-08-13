@@ -1120,7 +1120,7 @@ SysID   | Time (s)   | Fix Type   | Sats  | EPH   | Lat          | Lon
 5       | 1420.152   | 1          | 3     | 121   | 0.0000000    | 0.0000000
 ```
 
-You can see, `satellites_visible` is massively drop down from `10 -> 3`, and the `lat; lon` is drop down to `0; 0`. This is `jamming` for sure. To sumarize:
+You can see, `satellites_visible` is massively drop down from `10 -> 3`, and the `lat; long` is drop down to `0; 0`. This is `jamming` for sure. To sumarize:
 - Drone 2 lost signal at `1009.350`, the last is `36.0924472 -115.2422068` [(map)](https://www.google.com/maps/place/36%C2%B005'32.8%22N+115%C2%B014'31.9%22W/@36.0896733,-115.2439538,15.25z/data=!4m4!3m3!8m2!3d36.0924472!4d-115.2422068?entry=ttu&g_ep=EgoyMDI2MDgxMC4wIKXMDSoASAFQAw%3D%3D)
 - Drone 3 lost signal at `1758.318`, the last is `36.0778972 -115.2440034` [(map)](https://www.google.com/maps/place/36%C2%B004'40.4%22N+115%C2%B014'38.4%22W/@36.0778972,-115.2465783,17z/data=!3m1!4b1!4m4!3m3!8m2!3d36.0778972!4d-115.2440034?entry=ttu&g_ep=EgoyMDI2MDgxMC4wIKXMDSoASAFQAw%3D%3D)
 - Drone 5 lost signal at `1419.984`, the last is `36.0997052 -115.2478434` [(map)](https://www.google.com/maps/place/36%C2%B005'58.9%22N+115%C2%B014'52.2%22W/@36.0977228,-115.2518521,15.5z/data=!4m4!3m3!8m2!3d36.0997052!4d-115.2478434?entry=ttu&g_ep=EgoyMDI2MDgxMC4wIKXMDSoASAFQAw%3D%3D)
