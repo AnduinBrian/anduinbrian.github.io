@@ -1849,7 +1849,7 @@ $$
    T_\text{win} = \frac{N}{f_s} \implies T_\text{win} = \frac{8192}{48000} \approx 0.170666... \text{ s}
 $$
  
-Okay so 8192 samples span 170ms. Sanity check: `df = 5.86 Hz` and the sweep smear is $R \cdot T_\text{win} = 7.5\text{ Hz}$ — the two errors are about equal, which is exactly what the formula was balancing.
+Okay so 8192 samples span 170ms. Sanity check: $\Delta f = 5.86 Hz$  and the sweep smear is $R \cdot T_\text{win} = 7.5\text{ Hz}$ — the two errors are about equal, which is exactly what the formula was balancing.
  
 Next, we need to decide what is the best `step_size`. We want the tone to move **less than one bin** between consecutive frames, so the ridge stays smooth and trackable. We pick `step_size = 1024` because $48000/1024\approx47\text{ frame/s}$, so the tone drifts $44/47\approx0.94\text{ Hz}$ per frame (rate 1:1 is dabest). Extract 2 tone (tone_low, tone_high):
  
