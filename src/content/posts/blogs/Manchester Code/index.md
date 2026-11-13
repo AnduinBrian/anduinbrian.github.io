@@ -222,6 +222,6 @@ In the RF world, it's very easy for the receiver to lose sync and extract the wr
 
 <div align="center">
 
-![meme](pics/meme.png)
+![meme](pics/meme.jpg)
 
 </div>
