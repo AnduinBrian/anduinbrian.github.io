@@ -25,7 +25,7 @@ During this time, the receiver sees a continuous `HIGH (1)` signal...
 
 <div align="center">
 
-![Sending](pics/rx.png)
+![rx](pics/rx.png)
 
 *Receiver side...*
 
@@ -43,7 +43,7 @@ One reference point at the start isn’t enough. Since we can’t rely on the da
 
 <div align="center">
 
-![Sending](pics/MU.png)
+![MU](pics/MU.png)
 
 *C'mon do something Manchester...*
 
@@ -120,7 +120,7 @@ Let's play a fun game. I need to send a string `"Hello"`. We're gonna use `Manch
 
 <div align="center">
 
-![Sending](pics/H.png)
+![Manchester](pics/H.png)
 
 *Manchester Encoded for letter H*
 
@@ -146,7 +146,7 @@ rtl_433 -f 434.4M -s 250k -g 40 -w capture.cu8 -A -F kv -M time:iso -M level
 
 <div align="center">
 
-![Sending](pics/urh_1.png)
+![URH 1](pics/urh_1.png)
 
 *Correct the sample rate*
 
@@ -156,7 +156,7 @@ The red zone is the ignored zone (noise floor). We need to tweak it to get some 
 
 <div align="center">
 
-![Sending](pics/urh_2.png)
+![URH 2](pics/urh_2.png)
 
 *4 bursts of signal appear*
 
@@ -166,7 +166,7 @@ As you can see, before the first burst, there is no actual signal. Therefore, an
 
 <div align="center">
 
-![Sending](pics/urh_3.png)
+![URH 3](pics/urh_3.png)
 
 *Tweaking noise...*
 
@@ -178,7 +178,7 @@ By highlighting the shortest pulse, we can see that `73-75` samples represent 1 
 
 <div align="center">
 
-![Sending](pics/urh_4.png)
+![URH 4](pics/urh_4.png)
 
 *We use 75 for Samples/Symbol*
 
@@ -190,7 +190,7 @@ How can we tell it's using `Manchester`? Look at the longest and shortest pulse,
 
 <div align="center">
 
-![Sending](pics/urh_5.png)
+![URH 5](pics/urh_5.png)
 
 *The longest pulse*
 
@@ -200,7 +200,7 @@ Okay, now we move to the `Analysis` tab. Go to `Decoding -> ...` to get more det
 
 <div align="center">
 
-![Sending](pics/urh_6.png)
+![URH 6](pics/urh_6.png)
 
 *Decoding details*
 
@@ -219,3 +219,9 @@ This car uses a `Rolling Code` system. That means every time we press the button
 A funny question: `Manchester` converts 1 bit data to 2 chips. Therefore, it consumes 2x the bandwidth and takes more time to transfer compared to normal encoding. But why is it still used everywhere, from automotive keyfobs and garage doors to RFIDs? The answer is **Reliability**.
 
 In the RF world, it's very easy for the receiver to lose sync and extract the wrong data. But with `Manchester`, because the signal must change in the middle of every bit, the receiver always has a clear reference point for self-clocking. We sacrifice bandwidth just to ensure correct data extraction, and it's totally worth it.
+
+<div align="center">
+
+![meme](pics/meme.png)
+
+</div>
