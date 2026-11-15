@@ -214,7 +214,7 @@ Now we select the 4 bursts, then choose `Decoding: Manchester I`. Showing the da
 
 This car uses a `Rolling Code` system. That means every time we press the button, it will send a different data payload (to prevent replay attacks). However, if you look closely, some parts stay completely fixed, like the `0150e300` and the `43`. My guess is that `0150e300` is the Transmitter ID (start bytes) and `43` is an end byte.
 
-# Conclusion & What's Next?
+# Conclusion
 
 A funny question: `Manchester` converts 1 bit data to 2 chips. Therefore, it consumes 2x the bandwidth and takes more time to transfer compared to normal encoding. But why is it still used everywhere, from automotive keyfobs and garage doors to RFIDs? The answer is **Reliability**.
 
