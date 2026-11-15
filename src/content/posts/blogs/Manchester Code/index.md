@@ -57,6 +57,7 @@ The idea is simple: instead of representing a bit as a constant voltage level (`
 Because every single bit forces the signal to flip in the middle, the receiver always gets a clear physical reference point to resynchronize its timer. It doesn't matter if you send a thousand `0` or a thousand `1` in a row, the signal will keep bouncing up and down. The term for this is **self-clocking** signal.
 
 ## The details
+### The transmitter side
 
 To make this happen, we basically convert a data bit to a **chip**. So what is a `chip`? A `chip` is the unit that makes up a bit; 2 chips are used for 1 data bit. For example: Data bit `1` can be represented by `01`; `0` can be represented by `10` (`IEEE 802.3`).
 
@@ -126,7 +127,109 @@ Let's play a fun game. I need to send a string `"Hello"`. We're gonna use `Manch
 
 </div>
 
+### The receiver side
+
 The receiver will capture the signal and do the reverse to recover the data bits.
+
+Okay, but how does the receiver actually “do the reverse”?
+
+Here’s the trick: **every bit has a transition in the middle, no matter what**. A transition at the edge between two bits may or may not happen, depending on the data. So the receiver doesn’t need a shared clock. It just has to find those mid-bit transitions, because **they are the clock**.
+
+The simple way: sample at 1/4 and 3/4. If we already know how long one bit is, we read two points per bit:
+
++ one at `1/4` of the bit (middle of the first half).
++ one at `3/4` of the bit (middle of the second half).
+
+Then we compare them:
+
+| 1/4        | 3/4        | Result                              |
+|------------|------------|-------------------------------------|
+| LOW        | HIGH       | bit **1**                           |
+| HIGH       | LOW        | bit **0**                           |
+| same level | same level | **error!** (no mid-bit transition)  |
+
+```python
+import matplotlib.pyplot as plt
+
+data_bits = [0, 1, 0, 0, 1, 0, 0, 0]
+
+chips = []
+for bit in data_bits:
+    if bit == 1:
+        chips.extend([0, 1])   # IEEE 802.3: 1 = LOW -> HIGH
+    else:
+        chips.extend([1, 0])   # IEEE 802.3: 0 = HIGH -> LOW
+
+SAMPLES_PER_BIT = 100
+signal = []
+for c in chips:
+    signal.extend([c] * (SAMPLES_PER_BIT // 2))
+
+decoded_bits = []
+sample_points = []
+for i in range(len(signal) // SAMPLES_PER_BIT):
+    start = i * SAMPLES_PER_BIT
+    p1 = start + SAMPLES_PER_BIT // 4          
+    p2 = start + 3 * SAMPLES_PER_BIT // 4
+    first_half, second_half = signal[p1], signal[p2]
+    sample_points.append((p1, first_half, p2, second_half))
+
+    if (first_half, second_half) == (0, 1):
+        decoded_bits.append(1)
+    elif (first_half, second_half) == (1, 0):
+        decoded_bits.append(0)
+    else:
+        decoded_bits.append(None)             
+
+bit_string = "".join(str(b) for b in decoded_bits)
+print("[+] Sent:", "".join(map(str, data_bits)))
+print("[+] Decoded:", bit_string)
+print("[+] Char:", repr(chr(int(bit_string, 2))))
+
+x = [n / SAMPLES_PER_BIT for n in range(len(signal))]   
+
+plt.figure(figsize=(12, 3.8))
+plt.step(x, signal, where="post", color="blue", linewidth=2.5)
+
+for i in range(len(data_bits) + 1):
+    plt.axvline(x=i, color="gray", linestyle="--", linewidth=1)
+
+for i, (p1, v1, p2, v2) in enumerate(sample_points):
+    plt.plot([p1 / SAMPLES_PER_BIT, p2 / SAMPLES_PER_BIT], [v1, v2],
+             "o", color="orange", markersize=8, zorder=3)
+    mid = i + 0.5
+    plt.annotate("", xy=(mid, v2), xytext=(mid, v1),
+                 arrowprops=dict(arrowstyle="->", color="green", linewidth=2))
+    plt.text(mid, 1.15, str(decoded_bits[i]),
+             horizontalalignment="center", color="green",
+             fontsize=14, fontweight="bold")
+
+plt.ylim(-0.2, 1.3)
+plt.yticks([0, 1], ["LOW (0)", "HIGH (1)"], fontweight="bold")
+plt.xticks(range(len(data_bits) + 1))
+plt.xlabel("Time (Bit Periods)", fontweight="bold")
+plt.title(f"Manchester Decoded - {bit_string} = '{chr(int(bit_string, 2))}'",
+          fontsize=14, fontweight="bold", pad=15)
+
+plt.tight_layout()
+plt.show()
+```
+
+<div align="center">
+
+![Manchester](pics/real_rx.png)
+
+*The orange dots are where we sample.*
+
+</div>
+
+Hehe, but we cheated. A real receiver has no idea:
+- How many samples does one bit take?
+- Where does the first bit start?
+- Does the bit duration drift over time?
+
+So how does a real receiver figure those out? From the **pulse widths**. In `Manchester`, a pulse can only be 1T (half a bit) or 2T (a full bit). Nothing else is possible.
+
 
 # Get your hands dirty !!
 ## Setup & Capture
@@ -214,7 +317,7 @@ Now we select the 4 bursts, then choose `Decoding: Manchester I`. Showing the da
 
 This car uses a `Rolling Code` system. That means every time we press the button, it will send a different data payload (to prevent replay attacks). However, if you look closely, some parts stay completely fixed, like the `0150e300` and the `43`. My guess is that `0150e300` is the Transmitter ID (start bytes) and `43` is an end byte.
 
-# Conclusion & What's Next?
+# Conclusion
 
 A funny question: `Manchester` converts 1 bit data to 2 chips. Therefore, it consumes 2x the bandwidth and takes more time to transfer compared to normal encoding. But why is it still used everywhere, from automotive keyfobs and garage doors to RFIDs? The answer is **Reliability**.
 
