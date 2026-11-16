@@ -3,7 +3,7 @@ title: Manchester
 published: 2026-11-13
 description: 'Glory glory ... no not that. This is Manchester code !!'
 image: 'pics/cover.png'
-tags: ['Blogs', 'RF']
+tags: ['Blogs', 'RF', 'RTL-SDR']
 category: 'Blogs'
 draft: false 
 ---
