@@ -13,6 +13,8 @@ draft: false
 
 Imagine you are transmitting the byte `0xFF (11111111)`, where each bit takes 100 µs to transmit. After $800\mu s$, the transmitter finishes sending the entire byte.
 
+During this time, the receiver sees a continuous `HIGH (1)` signal... 
+
 <div align="center">
 
 ![Sending](pics/byte_ff.png)
@@ -21,7 +23,7 @@ Imagine you are transmitting the byte `0xFF (11111111)`, where each bit takes 10
 
 </div>
 
-During this time, the receiver sees a continuous `HIGH (1)` signal... 
+But here is the problem: How does the receiver know where one bit ends and the next bit begins? Since the signal remains `HIGH` throughout the entire transmission. Without a shared clock or another synchronization mechanism, the receiver may lose track of bit timing.
 
 <div align="center">
 
@@ -30,8 +32,6 @@ During this time, the receiver sees a continuous `HIGH (1)` signal...
 *Receiver side...*
 
 </div>
-
-But here is the problem: How does the receiver know where one bit ends and the next bit begins? Since the signal remains `HIGH` throughout the entire transmission. Without a shared clock or another synchronization mechanism, the receiver may lose track of bit timing.
 
 ## The solution
 
